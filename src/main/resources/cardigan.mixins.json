@@ -4,6 +4,8 @@
   "package": "me.steinborn.cardigan.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "network.flushconsolidation.ClientConnectionMixin",
+    "network.flushconsolidation.ThreadedAnvilChunkStorageMixin",
     "network.pipeline.LegacyQueryHandlerMixin",
     "network.pipeline.PacketDeflaterMixin",
     "network.pipeline.SplitterHandlerMixin"

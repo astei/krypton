@@ -1,4 +1,4 @@
-package me.steinborn.cardigan.mixin.network.flushconsolidation;
+package me.steinborn.krypton.mixin.network.flushconsolidation;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -6,7 +6,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import me.steinborn.cardigan.common.network.ConfigurableAutoFlush;
+import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.Packet;

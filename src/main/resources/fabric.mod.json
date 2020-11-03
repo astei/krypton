@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "cardigan",
+  "id": "krypton",
   "version": "${version}",
-  "name": "cardigan",
-  "description": "A Fabric mod that optimizes the Minecraft networking stack and entity tracker. ",
+  "name": "Krypton",
+  "description": "A Fabric mod that optimizes the Minecraft networking stack and entity tracker.",
   "authors": [
     "tuxed"
   ],
   "contact": {
-    "website": "https://github.com/astei/cardigan",
-    "repo": "https://github.com/astei/cardigan"
+    "website": "https://github.com/astei/krypton",
+    "repo": "https://github.com/astei/krypton"
   },
   "license": "MIT",
-  "icon": "assets/cardigan/icon.png",
+  "icon": "assets/krypton/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
-      "me.steinborn.cardigan.client.CardiganClient"
+      "me.steinborn.krypton.client.CardiganClient"
     ],
     "main": [
-      "me.steinborn.cardigan.Cardigan"
+      "me.steinborn.krypton.mod.Krypton"
     ]
   },
   "mixins": [
-    "cardigan.mixins.json"
+    "krypton.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.10.6+build.214",

@@ -1,6 +1,6 @@
-package me.steinborn.cardigan.mixin.network.flushconsolidation;
+package me.steinborn.krypton.mixin.network.flushconsolidation;
 
-import me.steinborn.cardigan.common.network.ConfigurableAutoFlush;
+import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
 import net.minecraft.network.Packet;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;

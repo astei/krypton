@@ -1,4 +1,4 @@
-package me.steinborn.cardigan.common.network;
+package me.steinborn.krypton.mod.network;
 
 public interface ConfigurableAutoFlush {
     void setShouldAutoFlush(boolean shouldAutoFlush);

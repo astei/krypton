@@ -1,9 +1,9 @@
-package me.steinborn.cardigan.mixin.network.pipeline;
+package me.steinborn.krypton.mixin.network.pipeline;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
-import me.steinborn.cardigan.common.network.VarintByteDecoder;
+import me.steinborn.krypton.mod.network.VarintByteDecoder;
 import net.minecraft.network.SplitterHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

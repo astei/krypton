@@ -1,4 +1,4 @@
-package me.steinborn.cardigan.mixin.network.pipeline;
+package me.steinborn.krypton.mixin.network.pipeline;
 
 import com.velocitypowered.natives.compression.VelocityCompressor;
 import com.velocitypowered.natives.util.Natives;

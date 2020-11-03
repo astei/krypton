@@ -1,5 +1,6 @@
 package me.steinborn.cardigan.mixin.network.pipeline;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.LegacyQueryHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +16,7 @@ public abstract class LegacyQueryHandlerMixin {
     @Inject(method = "channelRead", at = @At(value = "HEAD"), cancellable = true)
     public void channelRead(ChannelHandlerContext ctx, Object msg, CallbackInfo ci) throws Exception {
         if (!ctx.channel().isActive()) {
+            ((ByteBuf) msg).clear();
             ci.cancel();
         }
     }

@@ -24,7 +24,7 @@ public class SplitterHandlerMixin {
     @Overwrite
     public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (!ctx.channel().isActive()) {
-            in.skipBytes(in.readableBytes());
+            in.clear();
             return;
         }
 

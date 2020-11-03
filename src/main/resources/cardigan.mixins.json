@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.steinborn.cardigan.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "network.pipeline.LegacyQueryHandlerMixin",
+    "network.pipeline.PacketDeflaterMixin",
+    "network.pipeline.SplitterHandlerMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

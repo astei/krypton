@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "cardigan",
+  "version": "${version}",
+  "name": "cardigan",
+  "description": "A Fabric mod that optimizes the Minecraft networking stack and entity tracker. ",
+  "authors": [
+    "tuxed"
+  ],
+  "contact": {
+    "website": "https://github.com/astei/cardigan",
+    "repo": "https://github.com/astei/cardigan"
+  },
+  "license": "MIT",
+  "icon": "assets/cardigan/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.steinborn.cardigan.client.CardiganClient"
+    ],
+    "main": [
+      "me.steinborn.cardigan.Cardigan"
+    ]
+  },
+  "mixins": [
+    "cardigan.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.10.6+build.214",
+    "minecraft": "1.16.4"
+  }
+}

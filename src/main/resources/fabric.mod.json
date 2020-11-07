@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "me.steinborn.krypton.client.CardiganClient"
+      "me.steinborn.krypton.mod.client.KryptonClient"
     ],
     "main": [
       "me.steinborn.krypton.mod.Krypton"

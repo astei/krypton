@@ -25,8 +25,9 @@
   "mixins": [
     "krypton.mixins.json"
   ],
+  "accessWidener": "krypton.accesswidener",
   "depends": {
     "fabricloader": ">=0.10.6+build.214",
-    "minecraft": "1.16.4"
+    "minecraft": "1.16.x"
   }
 }

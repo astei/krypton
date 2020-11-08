@@ -93,4 +93,9 @@ publishing {
     }
 }
 
-project.tasks.build.dependsOn('shadowJar')
+minecraft {
+    accessWidener "src/main/resources/krypton.accesswidener"
+}
+
+tasks.remapJar.dependsOn(shadowJar)
+(tasks.remapJar.input as FileSystemLocationProperty<? extends FileSystemLocation>).set(shadowJar.archivePath)

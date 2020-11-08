@@ -30,17 +30,17 @@ compile from source.
 
 The following Krypton components should work regardless of platform:
 
-* introducing optimized packet splitting
-* adding an async entity tracker
-* adding flush consolidation
+* introducing optimized packet splitting (client and server)
+* adding an async entity tracker (server only)
+* adding flush consolidation (server only)
 
 The following components currently only work on Linux x86_64 and aarch64, but we plan to add Windows support:
 
-* updating the pipeline from using the `java.util.zip.*` zlib bindings to use libdeflate
+* updating the pipeline from using the `java.util.zip.*` zlib bindings to use libdeflate (client and server)
 
 The following components work only on Linux x86_64 and aarch64 and it is unlikely we will add Windows support:
 
-* introducing optimized encryption
+* introducing optimized encryption (client and server)
 
 ### Why?
 

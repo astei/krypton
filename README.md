@@ -8,6 +8,10 @@ This Fabric mod is an attempt to optimize the Minecraft networking stack by:
 * adding an async entity tracker
 * adding flush consolidation
 
+Krypton derives from work done in the [Velocity](https://velocitypowered.com/) and [Tuinity](https://github.com/Spottedleaf/Tuinity)
+projects. I have a good working relationship with the author of the Tuinity project so some
+of the networking improvements made in Tuinity will be present in Krypton.
+
 This project can be considered a WIP. The goal is to provide a networking complement to
 Lithium.
 

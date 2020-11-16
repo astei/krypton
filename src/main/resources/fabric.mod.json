@@ -18,7 +18,7 @@
     "client": [
       "me.steinborn.krypton.mod.client.KryptonClient"
     ],
-    "main": [
+    "server": [
       "me.steinborn.krypton.mod.Krypton"
     ]
   },

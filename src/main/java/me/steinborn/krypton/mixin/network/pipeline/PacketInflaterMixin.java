@@ -58,6 +58,8 @@ public class PacketInflaterMixin {
                 try {
                     compressor.inflate(compatibleIn, uncompressed, claimedUncompressedSize);
                     out.add(uncompressed);
+
+                    in.clear();
                 } catch (Exception e) {
                     uncompressed.release();
                     throw e;

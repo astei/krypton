@@ -14,11 +14,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ThreadedAnvilChunkStorageMixin {
     @Inject(method = "sendChunkDataPackets", at = @At("HEAD"))
     public void prepareToSendChunkDataPackets(ServerPlayerEntity player, Packet<?>[] packets, WorldChunk chunk, CallbackInfo info) {
-        ((ConfigurableAutoFlush) player.networkHandler.getConnection()).setShouldAutoFlush(false);
+        // Guard against fake players
+        if (player.getClass() == ServerPlayerEntity.class) {
+            ((ConfigurableAutoFlush) player.networkHandler.getConnection()).setShouldAutoFlush(false);
+        }
     }
 
     @Inject(method = "sendChunkDataPackets", at = @At("RETURN"))
     public void finishSendChunkDataPackets(ServerPlayerEntity player, Packet<?>[] packets, WorldChunk chunk, CallbackInfo info) {
-        ((ConfigurableAutoFlush) player.networkHandler.getConnection()).setShouldAutoFlush(true);
+        // Guard against fake players
+        if (player.getClass() == ServerPlayerEntity.class) {
+            ((ConfigurableAutoFlush) player.networkHandler.getConnection()).setShouldAutoFlush(true);
+        }
     }
 }

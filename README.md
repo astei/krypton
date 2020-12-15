@@ -65,7 +65,7 @@ There are several practical reasons for me to focus on Linux first:
   support that library on. Since Linux is my main development platform, the cost for Linux support is effectively free.
 * Most of the functionality Krypton introduces has the most impact on the server. While the Minecraft client
   uses the same networking components as the server, it does not utilize the networking stack as heavily as the
-  server. It's a fairly consistent that most Minecraft servers are deployed on Linux servers, be that through a
+  server. It's a fairly consistent pattern that most Minecraft servers are deployed on Linux servers, be that through a
   shared host, someone repurposing an old computer to run a Minecraft server, or buying a dedicated server.
 * In the case of encryption, the OpenSSL library is used to support direct encryption of packets with memory copies
   required. While OpenSSL is common on most free and open source *nixes, it is notably absent from Windows and not

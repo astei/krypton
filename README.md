@@ -62,11 +62,11 @@ There are several practical reasons for me to focus on Linux first:
 * Krypton often introduces native code for certain highly-optimized libraries that are not written in Java and
   where the benefit of using the library is able to pay for the cost of a JNI transition. However, when we use
   a native library, we need to invest effort into compiling and testing the code on each platform we intend to
-  support that library on. Since Linux is my main development platform, I pay that cost on Linux "for free."
+  support that library on. Since Linux is my main development platform, the cost for Linux support is effectively free.
 * Most of the functionality Krypton introduces has the most impact on the server. While the Minecraft client
   uses the same networking components as the server, it does not utilize the networking stack as heavily as the
-  server. It's a fairly consistent platform that most Minecraft servers are deployed on Linux servers, be that
-  through a shared host, someone repurposing an old computer to run a Minecraft server, or buying a dedicated server.
+  server. It's a fairly consistent that most Minecraft servers are deployed on Linux servers, be that through a
+  shared host, someone repurposing an old computer to run a Minecraft server, or buying a dedicated server.
 * In the case of encryption, the OpenSSL library is used to support direct encryption of packets with memory copies
   required. While OpenSSL is common on most free and open source *nixes, it is notably absent from Windows and not
   in any reasonably up-to-date form on macOS. In the US, the export of cryptography has some restrictions and I do not

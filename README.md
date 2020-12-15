@@ -1,6 +1,12 @@
-# Krypton (WIP)
+# Krypton
 
-This Fabric mod is an attempt to optimize the Minecraft networking stack by:
+**CAUTION!** Krypton is a work-in-progress. I do not provide any guarantees about its stability,
+             compatibility with other mods, or support for every possible setup out there. Support
+             for this mod is provided on a "best-effort" basis. This is not my day job, it is a hobby
+             growing out of related work I've done. **You have been warned.**
+
+This Fabric mod derives from work done in the [Velocity](https://velocitypowered.com/) and [Tuinity](https://github.com/Spottedleaf/Tuinity)
+projects. Specifically, Krypton is an attempt to optimize the Minecraft networking stack by:
 
 * updating the pipeline from using the `java.util.zip.*` zlib bindings to use libdeflate
 * introducing optimized packet splitting
@@ -8,27 +14,31 @@ This Fabric mod is an attempt to optimize the Minecraft networking stack by:
 * adding an async entity tracker
 * adding flush consolidation
 
-Krypton derives from work done in the [Velocity](https://velocitypowered.com/) and [Tuinity](https://github.com/Spottedleaf/Tuinity)
-projects. I have a good working relationship with the author of the Tuinity project so some
-of the networking improvements made in Tuinity will be present in Krypton.
-
-This project can be considered a WIP. The goal is to provide a networking complement to
-Lithium.
-
 Krypton derives itself from Ancient Greek _kryptos_, which means "the hidden one". This makes
 it evident most of the benefit from Krypton is "hidden" but is noticeable by a server administrator.
 
-I hope you will get involved in the development of Krypton, it'll be pretty exciting!
-[Please join my Discord](https://discord.gg/RUGArxEQ8J).
+[Please join my Discord](https://discord.gg/RUGArxEQ8J) to discuss the mod or get support.
 
 ## Compiling / Releases
 
-Well, this mod is not quite stable yet. It's my first Fabric mod after all. You should just
-compile from source.
+**CAUTION!** Krypton is a work-in-progress. I do not provide any guarantees about its stability,
+             compatibility with other mods, or support for every possible setup out there. Support
+             for this mod is provided on a "best-effort" basis. This is not my day job, it is a hobby
+             growing out of related work I've done. **You have been warned.**
+
+Development builds may be downloaded from my [Jenkins server](https://ci.velocitypowered.com/job/krypton/).
+They may or may not work. You can also compile the mod from source.
 
 ## Compatibility
 
-The following Krypton components should work regardless of platform:
+### With other mods
+
+I try to ensure that Krypton will work with the Fabric API, Lithium, and Sodium. Support beyond these
+mods is provided on a best effort basis.
+
+### With your operating system
+
+Krypton will work anywhere you can launch a Fabric server. The following Krypton components will work regardless of platform:
 
 * introducing optimized packet splitting (client and server)
 * adding an async entity tracker (server only)
@@ -42,18 +52,22 @@ The following components work only on Linux x86_64 and aarch64 and it is unlikel
 
 * introducing optimized encryption (client and server)
 
-### Why?
+#### Why are you focused on Linux?
 
-For one thing, Linux is my primary development environment. For another thing, Krypton often
-introduces native code (that's how we can get libdeflate in place of zlib for instance). This
-code has to be compiled and tested against each OS we intend to add support for.
+There are several practical reasons for me to focus on Linux first:
 
-The compression code uses the [libdeflate library](https://github.com/ebiggers/libdeflate) and
-is thus simple enough to port to other OSes. I already have a proof of concept of a libdeflate JNI
-binding being compiled and tested successfully on Windows, so it is only a matter of time before
-I bring that support to Windows.
-
-On the other hand, the encryption code uses the OpenSSL library, common on most free and open source
-*nixes but is notably absent from Windows and not in any reasonably up-to-date form on macOS. It would require
-a lot of headaches for me to ship encryption code directly in Krypton so I have elected to offload this
-task to the Linux distributions. This doesn't preclude Windows or macOS ports, it's just not a priority for me.
+* I primarily use Linux as my primary development platform. This is largely personal preference but it helps
+  that native development tools on Linux are often faster and better than on Windows. This makes prototyping
+  new potential features easier.
+* Krypton often introduces native code for certain highly-optimized libraries that are not written in Java and
+  where the benefit of using the library is able to pay for the cost of a JNI transition. However, when we use
+  a native library, we need to invest effort into compiling and testing the code on each platform we intend to
+  support that library on. Since Linux is my main development platform, I pay that cost on Linux "for free."
+* Most of the functionality Krypton introduces has the most impact on the server. While the Minecraft client
+  uses the same networking components as the server, it does not utilize the networking stack as heavily as the
+  server. It's a fairly consistent platform that most Minecraft servers are deployed on Linux servers, be that
+  through a shared host, someone repurposing an old computer to run a Minecraft server, or buying a dedicated server.
+* In the case of encryption, the OpenSSL library is used to support direct encryption of packets with memory copies
+  required. While OpenSSL is common on most free and open source *nixes, it is notably absent from Windows and not
+  in any reasonably up-to-date form on macOS. In the US, the export of cryptography has some restrictions and I do not
+  want to bother with it, so I let the Linux distributions handle this issue for me.

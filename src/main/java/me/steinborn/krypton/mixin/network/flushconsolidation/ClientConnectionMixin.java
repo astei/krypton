@@ -10,15 +10,15 @@ import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.Packet;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Optimizes ClientConnection by adding the ability to skip auto-flushing and using void promises where possible.
@@ -28,26 +28,21 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
     @Shadow private Channel channel;
 
     @Shadow @Final public static AttributeKey<NetworkState> ATTR_KEY_PROTOCOL;
-    @Shadow private int packetsSentCounter;
-    @Shadow @Final private static Logger LOGGER;
     private boolean shouldAutoFlush = true;
 
     @Shadow public abstract void setState(NetworkState state);
 
     /**
-     * Refactored sendImmediately method.
+     * Refactored sendImmediately method. THis is a better fit for {@code @Overwrite} but we have to write it this way
+     * because the fabric-networking-api-v1 also mixes into this...
+     *
      * @author Andrew Steinborn
      */
-    @Overwrite
-    private void sendImmediately(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback) {
+    @Inject(cancellable = true, method = "sendImmediately", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I"))
+    private void sendImmediately$rewrite(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback, CallbackInfo info) {
         NetworkState networkState = NetworkState.getPacketHandlerState(packet);
         NetworkState networkState2 = (NetworkState) this.channel.attr(ATTR_KEY_PROTOCOL).get();
-        ++this.packetsSentCounter;
         boolean newState = networkState2 != networkState;
-        if (newState) {
-            LOGGER.debug("Disabled auto read");
-            this.channel.config().setAutoRead(false);
-        }
 
         if (this.channel.eventLoop().inEventLoop()) {
             if (networkState != networkState2) {
@@ -63,6 +58,7 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
             });
         }
 
+        info.cancel();
     }
 
     @Redirect(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;channel:Lio/netty/channel/Channel;", opcode = Opcodes.GETFIELD))
@@ -74,7 +70,7 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
         if (callback == null) {
             this.channel.write(packet, this.channel.voidPromise());
         } else {
-            ChannelFuture channelFuture = this.channel.writeAndFlush(packet);
+            ChannelFuture channelFuture = this.channel.write(packet);
             channelFuture.addListener(callback);
             channelFuture.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }

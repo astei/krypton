@@ -35,7 +35,6 @@ mods is provided on a best effort basis.
 Krypton will work anywhere you can launch a Fabric server. The following Krypton components will work regardless of platform:
 
 * introducing optimized packet splitting (client and server)
-* adding an async entity tracker (server only)
 * adding flush consolidation (server only)
 * micro-optimizations to reduce garbage produced by the networking stack (client and server)
 

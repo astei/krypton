@@ -1,5 +1,6 @@
 package me.steinborn.krypton.mod.client;
 
+import com.velocitypowered.natives.util.Natives;
 import me.steinborn.krypton.mod.Krypton;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -15,5 +16,6 @@ public class KryptonClient implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Krypton is now accelerating your Minecraft client's networking stack \uD83D\uDE80");
         LOGGER.info("Note that Krypton is most effective on servers, not the client.");
+        LOGGER.info("Compression will use " + Natives.compress.getLoadedVariant() + ", encryption will use " + Natives.cipher.getLoadedVariant());
     }
 }

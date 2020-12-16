@@ -16,6 +16,7 @@ import java.util.List;
  */
 @Mixin(SplitterHandler.class)
 public class SplitterHandlerMixin {
+    private final VarintByteDecoder reader = new VarintByteDecoder();
 
     /**
      * @author Andrew Steinborn
@@ -27,9 +28,7 @@ public class SplitterHandlerMixin {
             return;
         }
 
-        // This looks like it might be slower and worse than allocating a 3 byte array. In reality, thanks to scalar
-        // replacement and inlining, there is no heap allocation required.
-        final VarintByteDecoder reader = new VarintByteDecoder();
+        reader.reset();
 
         int varintEnd = in.forEachByte(reader);
         if (varintEnd == -1) {

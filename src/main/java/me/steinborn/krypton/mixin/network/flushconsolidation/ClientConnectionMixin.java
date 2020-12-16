@@ -1,10 +1,9 @@
 package me.steinborn.krypton.mixin.network.flushconsolidation;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.*;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.concurrent.SingleThreadEventExecutor;
 import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
@@ -55,15 +54,32 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
             }
             doSendPacket(packet, callback);
         } else {
-            if (newState) {
-                this.channel.config().setAutoRead(false);
-            }
-            this.channel.eventLoop().execute(() -> {
-                if (newState) {
-                    this.setState(packetState);
+            // In newer versions of Netty, we can avoid wakeups using arbitrary tasks by implementing
+            // AbstractEventExecutor.LazyTask. But we are targeting an older version of Netty and don't
+            // have that luxury. So we'll be a bit clever. If we directly invoke Channel#write, it will
+            // use a WriteTask and that doesn't wake up the event loop. This does have a few preconditions
+            // (we can't be transitioning states, and for simplicity, no callbacks are supported) but if
+            // met this minimizes wakeups when we don't need to immediately do a syscall.
+            if (!newState && callback == null) {
+                ChannelPromise voidPromise = this.channel.voidPromise();
+                if (this.shouldAutoFlush.get()) {
+                    this.channel.writeAndFlush(packet, voidPromise);
+                } else {
+                    this.channel.write(packet, voidPromise);
                 }
-                doSendPacket(packet, callback);
-            });
+            } else {
+                // Fallback.
+                if (newState) {
+                    this.channel.config().setAutoRead(false);
+                }
+
+                this.channel.eventLoop().execute(() -> {
+                    if (newState) {
+                        this.setState(packetState);
+                    }
+                    doSendPacket(packet, callback);
+                });
+            }
         }
 
         info.cancel();

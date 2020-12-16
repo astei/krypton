@@ -3,5 +3,4 @@ accessWidener v1 named
 accessible method net/minecraft/network/PacketInflater decode (Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Ljava/util/List;)V
 accessible method net/minecraft/network/SplitterHandler decode (Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Ljava/util/List;)V
 accessible method net/minecraft/network/PacketDeflater encode (Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Lio/netty/buffer/ByteBuf;)V
-accessible method io/netty/handler/codec/MessageToByteEncoder allocateBuffer (Lio/netty/channel/ChannelHandlerContext;Ljava/lang/Object;Z)Lio/netty/buffer/ByteBuf;
 accessible method net/minecraft/server/world/ThreadedAnvilChunkStorage sendChunkDataPackets (Lnet/minecraft/server/network/ServerPlayerEntity;[Lnet/minecraft/network/Packet;Lnet/minecraft/world/chunk/WorldChunk;)V

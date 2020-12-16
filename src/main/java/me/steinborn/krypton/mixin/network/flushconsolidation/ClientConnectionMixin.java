@@ -3,7 +3,6 @@ package me.steinborn.krypton.mixin.network.flushconsolidation;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
@@ -12,13 +11,15 @@ import net.minecraft.network.NetworkState;
 import net.minecraft.network.Packet;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Optimizes ClientConnection by adding the ability to skip auto-flushing and using void promises where possible.
@@ -26,35 +27,42 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientConnection.class)
 public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
     @Shadow private Channel channel;
-
-    @Shadow @Final public static AttributeKey<NetworkState> ATTR_KEY_PROTOCOL;
-    private boolean shouldAutoFlush = true;
+    private AtomicBoolean shouldAutoFlush;
 
     @Shadow public abstract void setState(NetworkState state);
 
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void initAddedFields(CallbackInfo ci) {
+        this.shouldAutoFlush = new AtomicBoolean(true);
+    }
+
     /**
-     * Refactored sendImmediately method. THis is a better fit for {@code @Overwrite} but we have to write it this way
+     * Refactored sendImmediately method. This is a better fit for {@code @Overwrite} but we have to write it this way
      * because the fabric-networking-api-v1 also mixes into this...
      *
      * @author Andrew Steinborn
      */
-    @Inject(cancellable = true, method = "sendImmediately", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I"))
-    private void sendImmediately$rewrite(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback, CallbackInfo info) {
-        NetworkState networkState = NetworkState.getPacketHandlerState(packet);
-        NetworkState networkState2 = (NetworkState) this.channel.attr(ATTR_KEY_PROTOCOL).get();
-        boolean newState = networkState2 != networkState;
+    @Inject(locals = LocalCapture.CAPTURE_FAILHARD,
+            cancellable = true,
+            method = "sendImmediately",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I", opcode = Opcodes.GETFIELD))
+    private void sendImmediately$rewrite(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback, CallbackInfo info, NetworkState packetState, NetworkState protocolState) {
+        boolean newState = packetState != protocolState;
 
         if (this.channel.eventLoop().inEventLoop()) {
-            if (networkState != networkState2) {
-                this.setState(networkState);
+            if (newState) {
+                this.setState(packetState);
             }
-            doSendPacket(packet, callback, newState || this.shouldAutoFlush);
+            doSendPacket(packet, callback);
         } else {
+            if (newState) {
+                this.channel.config().setAutoRead(false);
+            }
             this.channel.eventLoop().execute(() -> {
-                if (networkState != networkState2) {
-                    this.setState(networkState);
+                if (newState) {
+                    this.setState(packetState);
                 }
-                doSendPacket(packet, callback, newState || this.shouldAutoFlush);
+                doSendPacket(packet, callback);
             });
         }
 
@@ -66,7 +74,7 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
         return null;
     }
 
-    private void doSendPacket(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback, boolean shouldFlush) {
+    private void doSendPacket(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback) {
         if (callback == null) {
             this.channel.write(packet, this.channel.voidPromise());
         } else {
@@ -75,15 +83,14 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
             channelFuture.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
 
-        if (shouldFlush) {
+        if (this.shouldAutoFlush.get()) {
             this.channel.flush();
         }
     }
 
     @Override
     public void setShouldAutoFlush(boolean shouldAutoFlush) {
-        boolean wasAutoFlushing = this.shouldAutoFlush;
-        this.shouldAutoFlush = shouldAutoFlush;
+        boolean wasAutoFlushing = this.shouldAutoFlush.getAndSet(shouldAutoFlush);
         if (!wasAutoFlushing) {
             this.channel.flush();
         }

@@ -3,10 +3,9 @@
   "minVersion": "0.8",
   "package": "me.steinborn.krypton.mixin",
   "compatibilityLevel": "JAVA_8",
-  "server": [
-    "network.flushconsolidation.ClientConnectionMixin"
-  ],
   "mixins": [
+    "network.flushconsolidation.ClientConnectionMixin",
+    "network.flushconsolidation.ThreadedAnvilChunkStorageMixin",
     "network.pipeline.LegacyQueryHandlerMixin",
     "network.pipeline.PacketDeflaterMixin",
     "network.pipeline.PacketInflaterMixin",

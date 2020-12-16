@@ -6,13 +6,7 @@
              growing out of related work I've done. **You have been warned.**
 
 This Fabric mod derives from work done in the [Velocity](https://velocitypowered.com/) and [Tuinity](https://github.com/Spottedleaf/Tuinity)
-projects. Specifically, Krypton is an attempt to optimize the Minecraft networking stack by:
-
-* updating the pipeline from using the `java.util.zip.*` zlib bindings to use libdeflate
-* introducing optimized packet splitting
-* introducing optimized encryption
-* adding an async entity tracker
-* adding flush consolidation
+projects. Specifically, Krypton is an attempt to optimize the Minecraft networking stack.
 
 Krypton derives itself from Ancient Greek _kryptos_, which means "the hidden one". This makes
 it evident most of the benefit from Krypton is "hidden" but is noticeable by a server administrator.
@@ -43,6 +37,7 @@ Krypton will work anywhere you can launch a Fabric server. The following Krypton
 * introducing optimized packet splitting (client and server)
 * adding an async entity tracker (server only)
 * adding flush consolidation (server only)
+* micro-optimizations to reduce garbage produced by the networking stack (client and server)
 
 The following components currently only work on Linux x86_64 and aarch64, but we plan to add Windows support:
 
@@ -50,7 +45,7 @@ The following components currently only work on Linux x86_64 and aarch64, but we
 
 The following components work only on Linux x86_64 and aarch64 and it is unlikely we will add Windows support:
 
-* introducing optimized encryption (client and server)
+* introducing optimized encryption (server only, client eventually)
 
 #### Why are you focused on Linux?
 

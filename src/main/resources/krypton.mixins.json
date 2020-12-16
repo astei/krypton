@@ -6,10 +6,14 @@
   "mixins": [
     "network.flushconsolidation.ClientConnectionMixin",
     "network.flushconsolidation.ThreadedAnvilChunkStorageMixin",
+
     "network.pipeline.LegacyQueryHandlerMixin",
     "network.pipeline.PacketDeflaterMixin",
     "network.pipeline.PacketInflaterMixin",
-    "network.pipeline.SplitterHandlerMixin"
+    "network.pipeline.SplitterHandlerMixin",
+
+    "network.pipeline.encryption.ClientConnectionMixin",
+    "network.pipeline.encryption.ServerLoginNetworkHandlerMixin"
   ],
   "client": [
   ],

@@ -4,6 +4,7 @@ import com.velocitypowered.natives.compression.VelocityCompressor;
 import com.velocitypowered.natives.util.Natives;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketInflater;
@@ -22,7 +23,7 @@ import static com.velocitypowered.natives.util.MoreByteBufUtils.ensureCompatible
 import static com.velocitypowered.natives.util.MoreByteBufUtils.preferredBuffer;
 
 @Mixin(PacketInflater.class)
-public class PacketInflaterMixin {
+public class PacketInflaterMixin extends ByteToMessageDecoder {
     @Shadow private int compressionThreshold;
     @Shadow @Final private Inflater inflater;
     private VelocityCompressor compressor;
@@ -69,5 +70,10 @@ public class PacketInflaterMixin {
             }
 
         }
+    }
+
+    @Override
+    protected void handlerRemoved0(ChannelHandlerContext ctx) throws Exception {
+        this.compressor.close();
     }
 }

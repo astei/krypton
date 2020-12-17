@@ -4,16 +4,14 @@
   "package": "me.steinborn.krypton.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "network.flushconsolidation.ClientConnectionMixin",
-    "network.flushconsolidation.ThreadedAnvilChunkStorageMixin",
-    "network.pipeline.LegacyQueryHandlerMixin",
-    "network.pipeline.PacketDeflaterMixin",
-    "network.pipeline.PacketInflaterMixin",
-    "network.pipeline.SplitterHandlerMixin",
-    "network.pipeline.encryption.ClientConnectionMixin",
-    "network.pipeline.encryption.ServerLoginNetworkHandlerMixin"
-  ],
-  "client": [
+    "network.shared.flushconsolidation.ClientConnectionMixin",
+    "network.shared.flushconsolidation.ThreadedAnvilChunkStorageMixin",
+    "network.shared.pipeline.LegacyQueryHandlerMixin",
+    "network.shared.pipeline.PacketDeflaterMixin",
+    "network.shared.pipeline.PacketInflaterMixin",
+    "network.shared.pipeline.SplitterHandlerMixin",
+    "network.shared.pipeline.encryption.ClientConnectionMixin",
+    "network.shared.pipeline.encryption.ServerLoginNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

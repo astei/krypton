@@ -1,15 +1,12 @@
-package me.steinborn.krypton.mixin.network.flushconsolidation;
+package me.steinborn.krypton.mixin.network.shared.flushconsolidation;
 
 import io.netty.channel.*;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import io.netty.util.concurrent.SingleThreadEventExecutor;
 import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
-import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.Packet;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mixin.network.flushconsolidation;
+package me.steinborn.krypton.mixin.network.shared.flushconsolidation;
 
 import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
 import net.minecraft.network.Packet;

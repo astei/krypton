@@ -1,10 +1,7 @@
-package me.steinborn.krypton.mixin.network.pipeline.encryption;
+package me.steinborn.krypton.mixin.network.shared.pipeline.encryption;
 
-import com.velocitypowered.natives.encryption.VelocityCipher;
-import com.velocitypowered.natives.util.Natives;
 import me.steinborn.krypton.mod.network.ClientConnectionEncryptionExtension;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.NetworkEncryptionUtils;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.spongepowered.asm.mixin.Final;

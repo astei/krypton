@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mixin.network.pipeline.encryption;
+package me.steinborn.krypton.mixin.network.shared.pipeline.encryption;
 
 import com.velocitypowered.natives.encryption.VelocityCipher;
 import com.velocitypowered.natives.util.Natives;
@@ -7,8 +7,6 @@ import me.steinborn.krypton.mod.network.ClientConnectionEncryptionExtension;
 import me.steinborn.krypton.mod.network.pipeline.MinecraftCipherDecoder;
 import me.steinborn.krypton.mod.network.pipeline.MinecraftCipherEncoder;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.encryption.PacketDecryptor;
-import net.minecraft.network.encryption.PacketEncryptor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

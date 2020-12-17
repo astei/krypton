@@ -25,8 +25,8 @@ it evident most of the benefit from Krypton is "hidden" but is noticeable by a s
              growing out of related work I've done. **You have been warned.**
 
 Releases I deem reasonably stable can be found on [GitHub](https://github.com/astei/krypton/releases) and
-CurseForge (TBD).  Development builds may be downloaded from my [Jenkins server](https://ci.velocitypowered.com/job/krypton/).
-They may or may not work.
+[CurseForge](https://www.curseforge.com/minecraft/mc-mods/krypton).  Development builds may be downloaded
+from my [Jenkins server](https://ci.velocitypowered.com/job/krypton/).  They may or may not work.
 
 You can also compile the mod from source in the usual fashion.
 

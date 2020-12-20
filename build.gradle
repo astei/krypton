@@ -28,6 +28,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     implementation "com.velocitypowered:velocity-native:1.1.0-SNAPSHOT"
+    implementation 'com.github.luben:zstd-jni:1.4.8-1'
+    shade 'com.github.luben:zstd-jni:1.4.8-1'
     shade("com.velocitypowered:velocity-native:1.1.0-SNAPSHOT") {
         transitive = false
     }

@@ -9,13 +9,16 @@ import net.minecraft.network.ClientConnection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin {
     @Shadow private Channel channel;
 
-    @Overwrite
-    public void setCompressionThreshold(int compressionThreshold) {
+    @Inject(method = "setCompressionThreshold", at = @At("HEAD"), cancellable = true)
+    public void setCompressionThreshold(int compressionThreshold, CallbackInfo ci) {
         if (compressionThreshold >= 0) {
             VelocityCompressor compressor = Natives.compress.get().create(6);
             MinecraftCompressEncoder encoder = new MinecraftCompressEncoder(compressionThreshold, compressor);
@@ -27,5 +30,7 @@ public class ClientConnectionMixin {
             this.channel.pipeline().remove("decompress");
             this.channel.pipeline().remove("compress");
         }
+
+        ci.cancel();
     }
 }

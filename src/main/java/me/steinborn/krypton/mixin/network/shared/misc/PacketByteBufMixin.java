@@ -20,6 +20,7 @@ public abstract class PacketByteBufMixin extends ByteBuf {
     @Shadow public abstract int writeCharSequence(CharSequence charSequence, Charset charset);
 
     /**
+     * @author Andrew
      * @reason Use {@link ByteBuf#writeCharSequence(CharSequence, Charset)} instead for improved performance along with
      *         computing the byte size ahead of time with {@link ByteBufUtil#utf8Bytes(CharSequence)}
      */

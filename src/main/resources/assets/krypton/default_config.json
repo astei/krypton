@@ -1,0 +1,16 @@
+{
+  "features": {
+    "flusb_consolidation.enabled": true,
+    "flusb_consolidation.entity_tracker": true,
+    "flusb_consolidation.player_tick": true,
+    "flusb_consolidation.sending_chunks": true,
+
+    "pipeline.compression_natives": false,
+    "pipeline.encryption_natives": false
+  },
+  "compression": {
+    "zlib": {
+      "level": 6
+    }
+  }
+}

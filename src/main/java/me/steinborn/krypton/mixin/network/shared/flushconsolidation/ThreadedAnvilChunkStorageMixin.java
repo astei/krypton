@@ -1,7 +1,7 @@
 package me.steinborn.krypton.mixin.network.shared.flushconsolidation;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
+import me.steinborn.krypton.mod.network.util.AutoFlushUtil;
 import net.minecraft.network.Packet;
 import net.minecraft.server.network.DebugInfoSender;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -98,7 +98,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     }
 
     private void sendChunks(ChunkSectionPos oldPos, ServerPlayerEntity player) {
-        setAutoFlush(player, false);
+        AutoFlushUtil.setAutoFlush(player, false);
 
         int oldChunkX = oldPos.getSectionX();
         int oldChunkZ = oldPos.getSectionZ();
@@ -136,7 +136,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
             }
         }
 
-        setAutoFlush(player, true);
+        AutoFlushUtil.setAutoFlush(player, true);
     }
 
     protected void sendPacketsForChunk(ServerPlayerEntity player, ChunkPos pos, Packet<?>[] packets, boolean withinMaxWatchDistance, boolean withinViewDistance) {
@@ -160,21 +160,15 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     @Inject(method = "tickPlayerMovement", at = @At("HEAD"))
     public void disableAutoFlushForEntityTracking(CallbackInfo info) {
         for (ServerPlayerEntity player : world.getPlayers()) {
-            setAutoFlush(player, false);
+            AutoFlushUtil.setAutoFlush(player, false);
         }
     }
 
     @Inject(method = "tickPlayerMovement", at = @At("RETURN"))
     public void enableAutoFlushForEntityTracking(CallbackInfo info) {
         for (ServerPlayerEntity player : world.getPlayers()) {
-            setAutoFlush(player, true);
+            AutoFlushUtil.setAutoFlush(player, true);
         }
     }
 
-    private static void setAutoFlush(ServerPlayerEntity player, boolean val) {
-        if (player.getClass() == ServerPlayerEntity.class) {
-            ConfigurableAutoFlush configurableAutoFlusher = ((ConfigurableAutoFlush) player.networkHandler.getConnection());
-            configurableAutoFlusher.setShouldAutoFlush(val);
-        }
-    }
 }

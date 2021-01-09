@@ -29,5 +29,12 @@
   "depends": {
     "fabricloader": ">=0.10.6+build.214",
     "minecraft": "1.16.x"
+  },
+
+  "custom": {
+    "_lithium_mixin_comment": "We disable the player_chunk_tick mixin as Krypton contains a superior version that does flush consolidation.",
+    "lithium:options": {
+      "mixin.world.player_chunk_tick": false
+    }
   }
 }

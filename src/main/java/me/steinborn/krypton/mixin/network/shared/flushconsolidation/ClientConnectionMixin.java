@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Optimizes ClientConnection by adding the ability to skip auto-flushing and using void promises where possible.
@@ -25,13 +25,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mixin(ClientConnection.class)
 public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
     @Shadow private Channel channel;
-    private AtomicBoolean shouldAutoFlush;
+    private AtomicInteger autoFlushCounts;
 
     @Shadow public abstract void setState(NetworkState state);
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void initAddedFields(CallbackInfo ci) {
-        this.shouldAutoFlush = new AtomicBoolean(true);
+        this.autoFlushCounts = new AtomicInteger(0);
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
             // met this minimizes wakeups when we don't need to immediately do a syscall.
             if (!newState && callback == null) {
                 ChannelPromise voidPromise = this.channel.voidPromise();
-                if (this.shouldAutoFlush.get()) {
+                if (this.autoFlushCounts.get() <= 0) {
                     this.channel.writeAndFlush(packet, voidPromise);
                 } else {
                     this.channel.write(packet, voidPromise);
@@ -98,16 +98,33 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
             channelFuture.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
 
-        if (this.shouldAutoFlush.get()) {
+        if (this.autoFlushCounts.get() <= 0) {
             this.channel.flush();
+        }
+    }
+
+    private boolean decrementAutoFlushCount() {
+        for (;;) {
+            int current = this.autoFlushCounts.get();
+            if (current <= 0) {
+                return true;
+            }
+
+            int newVal = Math.max(0, current - 1);
+            if (this.autoFlushCounts.compareAndSet(current, newVal)) {
+                return newVal <= 0;
+            }
         }
     }
 
     @Override
     public void setShouldAutoFlush(boolean shouldAutoFlush) {
-        boolean wasAutoFlushing = this.shouldAutoFlush.getAndSet(shouldAutoFlush);
-        if (!wasAutoFlushing) {
-            this.channel.flush();
+        if (shouldAutoFlush) {
+            this.autoFlushCounts.incrementAndGet();
+        } else {
+            if (this.decrementAutoFlushCount()) {
+                this.channel.flush();
+            }
         }
     }
 }

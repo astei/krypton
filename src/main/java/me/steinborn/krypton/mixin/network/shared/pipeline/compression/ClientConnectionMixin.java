@@ -7,7 +7,6 @@ import me.steinborn.krypton.mod.network.compression.MinecraftCompressDecoder;
 import me.steinborn.krypton.mod.network.compression.MinecraftCompressEncoder;
 import net.minecraft.network.ClientConnection;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,7 +19,7 @@ public class ClientConnectionMixin {
     @Inject(method = "setCompressionThreshold", at = @At("HEAD"), cancellable = true)
     public void setCompressionThreshold(int compressionThreshold, CallbackInfo ci) {
         if (compressionThreshold >= 0) {
-            VelocityCompressor compressor = Natives.compress.get().create(6);
+            VelocityCompressor compressor = Natives.compress.get().create(4);
             MinecraftCompressEncoder encoder = new MinecraftCompressEncoder(compressionThreshold, compressor);
             MinecraftCompressDecoder decoder = new MinecraftCompressDecoder(compressionThreshold, compressor);
 

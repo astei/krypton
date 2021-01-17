@@ -10,7 +10,7 @@
   },
   "compression": {
     "zlib": {
-      "level": 6
+      "level": 4
     }
   }
 }

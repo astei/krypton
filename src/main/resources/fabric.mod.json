@@ -16,10 +16,13 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "me.steinborn.krypton.mod.client.KryptonClient"
+      "me.steinborn.krypton.mod.client.KryptonClientInitializer"
     ],
     "server": [
-      "me.steinborn.krypton.mod.Krypton"
+      "me.steinborn.krypton.mod.server.KryptonServerInitializer"
+    ],
+    "main": [
+      "me.steinborn.krypton.mod.shared.KryptonSharedInitializer"
     ]
   },
   "mixins": [

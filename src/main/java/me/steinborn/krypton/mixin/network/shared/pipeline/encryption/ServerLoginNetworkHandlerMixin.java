@@ -1,6 +1,6 @@
 package me.steinborn.krypton.mixin.network.shared.pipeline.encryption;
 
-import me.steinborn.krypton.mod.network.ClientConnectionEncryptionExtension;
+import me.steinborn.krypton.mod.shared.network.ClientConnectionEncryptionExtension;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
 import net.minecraft.server.network.ServerLoginNetworkHandler;

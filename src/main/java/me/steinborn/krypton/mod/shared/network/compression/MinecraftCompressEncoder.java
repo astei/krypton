@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mod.network.compression;
+package me.steinborn.krypton.mod.shared.network.compression;
 
 import com.velocitypowered.natives.compression.VelocityCompressor;
 import com.velocitypowered.natives.util.MoreByteBufUtils;

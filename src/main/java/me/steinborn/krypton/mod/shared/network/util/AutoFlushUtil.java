@@ -1,6 +1,6 @@
-package me.steinborn.krypton.mod.network.util;
+package me.steinborn.krypton.mod.shared.network.util;
 
-import me.steinborn.krypton.mod.network.ConfigurableAutoFlush;
+import me.steinborn.krypton.mod.shared.network.ConfigurableAutoFlush;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerPlayerEntity;
 

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static me.steinborn.krypton.mod.network.util.AutoFlushUtil.setAutoFlush;
+import static me.steinborn.krypton.mod.shared.network.util.AutoFlushUtil.setAutoFlush;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin {

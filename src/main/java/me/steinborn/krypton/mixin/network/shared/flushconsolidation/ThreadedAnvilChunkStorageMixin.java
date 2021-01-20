@@ -1,7 +1,7 @@
 package me.steinborn.krypton.mixin.network.shared.flushconsolidation;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import me.steinborn.krypton.mod.network.util.AutoFlushUtil;
+import me.steinborn.krypton.mod.shared.network.util.AutoFlushUtil;
 import net.minecraft.network.Packet;
 import net.minecraft.server.network.DebugInfoSender;
 import net.minecraft.server.network.ServerPlayerEntity;

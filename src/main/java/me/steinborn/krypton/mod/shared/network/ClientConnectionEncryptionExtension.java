@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mod.network;
+package me.steinborn.krypton.mod.shared.network;
 
 import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;

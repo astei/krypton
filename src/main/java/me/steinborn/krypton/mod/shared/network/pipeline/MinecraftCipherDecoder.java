@@ -1,25 +1,25 @@
-package me.steinborn.krypton.mod.network.pipeline;
+package me.steinborn.krypton.mod.shared.network.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.velocitypowered.natives.encryption.VelocityCipher;
 import com.velocitypowered.natives.util.MoreByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageEncoder;
+import io.netty.handler.codec.MessageToMessageDecoder;
 
 import java.util.List;
 
-public class MinecraftCipherEncoder extends MessageToMessageEncoder<ByteBuf> {
+public class MinecraftCipherDecoder extends MessageToMessageDecoder<ByteBuf> {
 
   private final VelocityCipher cipher;
 
-  public MinecraftCipherEncoder(VelocityCipher cipher) {
+  public MinecraftCipherDecoder(VelocityCipher cipher) {
     this.cipher = Preconditions.checkNotNull(cipher, "cipher");
   }
 
   @Override
-  protected void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-    ByteBuf compatible = MoreByteBufUtils.ensureCompatible(ctx.alloc(), cipher, msg);
+  protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    ByteBuf compatible = MoreByteBufUtils.ensureCompatible(ctx.alloc(), cipher, in).slice();
     try {
       cipher.process(compatible);
       out.add(compatible);

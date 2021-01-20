@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static me.steinborn.krypton.mod.network.util.AutoFlushUtil.setAutoFlush;
+import static me.steinborn.krypton.mod.shared.network.util.AutoFlushUtil.setAutoFlush;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {

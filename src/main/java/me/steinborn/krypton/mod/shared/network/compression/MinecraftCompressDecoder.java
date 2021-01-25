@@ -3,16 +3,13 @@ package me.steinborn.krypton.mod.shared.network.compression;
 import com.velocitypowered.natives.compression.VelocityCompressor;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.CorruptedFrameException;
-import io.netty.handler.codec.MessageToMessageDecoder;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.PacketByteBuf;
 
 import java.util.List;
 
-import static com.velocitypowered.natives.util.MoreByteBufUtils.ensureCompatible;
-import static com.velocitypowered.natives.util.MoreByteBufUtils.preferredBuffer;
-
-public class MinecraftCompressDecoder extends MessageToMessageDecoder<ByteBuf> {
+public class MinecraftCompressDecoder extends ByteToMessageDecoder {
 
   private static final int VANILLA_MAXIMUM_UNCOMPRESSED_SIZE = 2 * 1024 * 1024; // 2MiB
   private static final int HARD_MAXIMUM_UNCOMPRESSED_SIZE = 16 * 1024 * 1024; // 16MiB
@@ -31,38 +28,40 @@ public class MinecraftCompressDecoder extends MessageToMessageDecoder<ByteBuf> {
 
   @Override
   protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-    PacketByteBuf wrappedBuf = new PacketByteBuf(in);
-    int claimedUncompressedSize = wrappedBuf.readVarInt();
-    if (claimedUncompressedSize == 0) {
-      // This message is not compressed.
-      out.add(in.retainedSlice());
-      return;
-    }
+    if (in.readableBytes() != 0) {
+      PacketByteBuf packetBuf = new PacketByteBuf(in);
+      int claimedUncompressedSize = packetBuf.readVarInt();
 
-    if (claimedUncompressedSize < threshold) {
-      throw new CorruptedFrameException("Uncompressed size " + claimedUncompressedSize + " is less than"
-              + " threshold " + threshold);
-    }
-    if (claimedUncompressedSize > UNCOMPRESSED_CAP) {
-      throw new CorruptedFrameException("Uncompressed size " + claimedUncompressedSize + " exceeds hard " +
-              "threshold of " + UNCOMPRESSED_CAP);
-    }
+      if (claimedUncompressedSize == 0) {
+        out.add(packetBuf.readBytes(packetBuf.readableBytes()));
+      } else {
+        if (claimedUncompressedSize < this.threshold) {
+          throw new DecoderException("Badly compressed packet - size of " + claimedUncompressedSize + " is below server threshold of " + this.threshold);
+        }
 
-    ByteBuf compatibleIn = ensureCompatible(ctx.alloc(), compressor, in);
-    ByteBuf uncompressed = preferredBuffer(ctx.alloc(), compressor, claimedUncompressedSize);
-    try {
-      compressor.inflate(compatibleIn, uncompressed, claimedUncompressedSize);
-      out.add(uncompressed);
-    } catch (Exception e) {
-      uncompressed.release();
-      throw e;
-    } finally {
-      compatibleIn.release();
+        if (claimedUncompressedSize > UNCOMPRESSED_CAP) {
+          throw new DecoderException("Badly compressed packet - size of " + claimedUncompressedSize + " is larger than maximum of " + UNCOMPRESSED_CAP);
+        }
+
+        ByteBuf compatibleIn = com.velocitypowered.natives.util.MoreByteBufUtils.ensureCompatible(ctx.alloc(), compressor, in);
+        ByteBuf uncompressed = com.velocitypowered.natives.util.MoreByteBufUtils.preferredBuffer(ctx.alloc(), compressor, claimedUncompressedSize);
+        try {
+          compressor.inflate(compatibleIn, uncompressed, claimedUncompressedSize);
+          out.add(uncompressed);
+          in.clear();
+        } catch (Exception e) {
+          uncompressed.release();
+          throw e;
+        } finally {
+          compatibleIn.release();
+        }
+      }
+
     }
   }
 
   @Override
-  public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+  public void handlerRemoved0(ChannelHandlerContext ctx) throws Exception {
     compressor.close();
   }
 }

@@ -100,43 +100,45 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     private void sendChunks(ChunkSectionPos oldPos, ServerPlayerEntity player) {
         AutoFlushUtil.setAutoFlush(player, false);
 
-        int oldChunkX = oldPos.getSectionX();
-        int oldChunkZ = oldPos.getSectionZ();
+        try {
+            int oldChunkX = oldPos.getSectionX();
+            int oldChunkZ = oldPos.getSectionZ();
 
-        int newChunkX = MathHelper.floor(player.getX()) >> 4;
-        int newChunkZ = MathHelper.floor(player.getZ()) >> 4;
+            int newChunkX = MathHelper.floor(player.getX()) >> 4;
+            int newChunkZ = MathHelper.floor(player.getZ()) >> 4;
 
-        if (Math.abs(oldChunkX - newChunkX) <= this.watchDistance * 2 && Math.abs(oldChunkZ - newChunkZ) <= this.watchDistance * 2) {
-            int minSendChunkX = Math.min(newChunkX, oldChunkX) - this.watchDistance;
-            int maxSendChunkZ = Math.min(newChunkZ, oldChunkZ) - this.watchDistance;
-            int q = Math.max(newChunkX, oldChunkX) + this.watchDistance;
-            int r = Math.max(newChunkZ, oldChunkZ) + this.watchDistance;
+            if (Math.abs(oldChunkX - newChunkX) <= this.watchDistance * 2 && Math.abs(oldChunkZ - newChunkZ) <= this.watchDistance * 2) {
+                int minSendChunkX = Math.min(newChunkX, oldChunkX) - this.watchDistance;
+                int maxSendChunkZ = Math.min(newChunkZ, oldChunkZ) - this.watchDistance;
+                int q = Math.max(newChunkX, oldChunkX) + this.watchDistance;
+                int r = Math.max(newChunkZ, oldChunkZ) + this.watchDistance;
 
-            for(int curX = minSendChunkX; curX <= q; ++curX) {
-                for(int curZ = maxSendChunkZ; curZ <= r; ++curZ) {
-                    ChunkPos chunkPos = new ChunkPos(curX, curZ);
-                    boolean inOld = getChebyshevDistance(chunkPos, oldChunkX, oldChunkZ) <= this.watchDistance;
-                    boolean inNew = getChebyshevDistance(chunkPos, newChunkX, newChunkZ) <= this.watchDistance;
-                    this.sendPacketsForChunk(player, chunkPos, new Packet[2], inOld, inNew);
+                for (int curX = minSendChunkX; curX <= q; ++curX) {
+                    for (int curZ = maxSendChunkZ; curZ <= r; ++curZ) {
+                        ChunkPos chunkPos = new ChunkPos(curX, curZ);
+                        boolean inOld = getChebyshevDistance(chunkPos, oldChunkX, oldChunkZ) <= this.watchDistance;
+                        boolean inNew = getChebyshevDistance(chunkPos, newChunkX, newChunkZ) <= this.watchDistance;
+                        this.sendPacketsForChunk(player, chunkPos, new Packet[2], inOld, inNew);
+                    }
+                }
+            } else {
+                for (int curX = oldChunkX - this.watchDistance; curX <= oldChunkX + this.watchDistance; ++curX) {
+                    for (int curZ = oldChunkZ - this.watchDistance; curZ <= oldChunkZ + this.watchDistance; ++curZ) {
+                        ChunkPos pos = new ChunkPos(curX, curZ);
+                        this.sendPacketsForChunk(player, pos, new Packet[2], true, false);
+                    }
+                }
+
+                for (int curX = newChunkX - this.watchDistance; curX <= newChunkX + this.watchDistance; ++curX) {
+                    for (int curZ = newChunkZ - this.watchDistance; curZ <= newChunkZ + this.watchDistance; ++curZ) {
+                        ChunkPos pos = new ChunkPos(curX, curZ);
+                        this.sendPacketsForChunk(player, pos, new Packet[2], false, true);
+                    }
                 }
             }
-        } else {
-            for(int curX = oldChunkX - this.watchDistance; curX <= oldChunkX + this.watchDistance; ++curX) {
-                for(int curZ = oldChunkZ - this.watchDistance; curZ <= oldChunkZ + this.watchDistance; ++curZ) {
-                    ChunkPos pos = new ChunkPos(curX, curZ);
-                    this.sendPacketsForChunk(player, pos, new Packet[2], true, false);
-                }
-            }
-
-            for(int curX = newChunkX - this.watchDistance; curX <= newChunkX + this.watchDistance; ++curX) {
-                for(int curZ = newChunkZ - this.watchDistance; curZ <= newChunkZ + this.watchDistance; ++curZ) {
-                    ChunkPos pos = new ChunkPos(curX, curZ);
-                    this.sendPacketsForChunk(player, pos, new Packet[2], false, true);
-                }
-            }
+        } finally {
+            AutoFlushUtil.setAutoFlush(player, true);
         }
-
-        AutoFlushUtil.setAutoFlush(player, true);
     }
 
     protected void sendPacketsForChunk(ServerPlayerEntity player, ChunkPos pos, Packet<?>[] packets, boolean withinMaxWatchDistance, boolean withinViewDistance) {

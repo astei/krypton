@@ -6,8 +6,6 @@
   "mixins": [
     "network.shared.flushconsolidation.ClientConnectionMixin",
     "network.shared.flushconsolidation.EntityTrackerMixin",
-    "network.shared.flushconsolidation.PlayerManagerMixin",
-    "network.shared.flushconsolidation.ServerPlayerEntityMixin",
     "network.shared.flushconsolidation.ThreadedAnvilChunkStorageMixin",
     "network.shared.misc.PacketByteBufMixin",
     "network.shared.pipeline.LegacyQueryHandlerMixin",

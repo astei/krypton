@@ -8,8 +8,9 @@
     "tuxed"
   ],
   "contact": {
-    "website": "https://github.com/astei/krypton",
-    "repo": "https://github.com/astei/krypton"
+    "homepage": "https://github.com/astei/krypton",
+    "sources": "https://github.com/astei/krypton",
+    "issues": "https://github.com/astei/krypton/issues"
   },
   "license": "MIT",
   "icon": "assets/krypton/icon.png",

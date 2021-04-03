@@ -33,8 +33,10 @@ public class SplitterHandlerMixin {
 
         int varintEnd = in.forEachByte(reader);
         if (varintEnd == -1) {
-            // We tried to go beyond the end of the buffer. This is probably a good sign that the
-            // buffer was too short to hold a proper varint.
+            /**
+             * We tried to go beyond the end of the buffer. This is probably a good sign that the
+             * buffer was too short to hold a proper varint.
+             */
             return;
         }
 

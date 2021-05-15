@@ -12,9 +12,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin {
-    @Shadow private Channel channel;
+    private static Constructor<?> krypton_viaEventConstructor;
+
+    static {
+        // ViaFabric compatibility
+        try {
+            krypton_viaEventConstructor =
+                    Class.forName("com.viaversion.fabric.common.handler.PipelineReorderEvent").getConstructor();
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+        }
+    }
+
+    @Shadow
+    private Channel channel;
 
     @Inject(method = "setCompressionThreshold", at = @At("HEAD"), cancellable = true)
     public void setCompressionThreshold(int compressionThreshold, CallbackInfo ci) {
@@ -30,6 +45,17 @@ public class ClientConnectionMixin {
             this.channel.pipeline().remove("compress");
         }
 
+        this.handleViaCompression();
+
         ci.cancel();
+    }
+
+    private void handleViaCompression() {
+        if (krypton_viaEventConstructor == null) return;
+        try {
+            this.channel.pipeline().fireUserEventTriggered(krypton_viaEventConstructor.newInstance());
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

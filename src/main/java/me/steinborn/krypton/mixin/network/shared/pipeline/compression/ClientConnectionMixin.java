@@ -20,6 +20,13 @@ public class ClientConnectionMixin {
     private static Constructor<?> krypton_viaEventConstructor;
 
     static {
+        krypton_findViaEvent();
+    }
+
+    @Shadow
+    private Channel channel;
+
+    private static void krypton_findViaEvent() {
         // ViaFabric compatibility
         try {
             krypton_viaEventConstructor =
@@ -27,9 +34,6 @@ public class ClientConnectionMixin {
         } catch (ClassNotFoundException | NoSuchMethodException ignored) {
         }
     }
-
-    @Shadow
-    private Channel channel;
 
     @Inject(method = "setCompressionThreshold", at = @At("HEAD"), cancellable = true)
     public void setCompressionThreshold(int compressionThreshold, CallbackInfo ci) {

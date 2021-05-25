@@ -47,7 +47,7 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
     @Inject(locals = LocalCapture.CAPTURE_FAILHARD,
             cancellable = true,
             method = "sendImmediately",
-            at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I", opcode = Opcodes.GETFIELD, shift = At.Shift.AFTER))
+            at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I", opcode = Opcodes.PUTFIELD, shift = At.Shift.AFTER))
     private void sendImmediately$rewrite(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback, CallbackInfo info, NetworkState packetState, NetworkState protocolState) {
         boolean newState = packetState != protocolState;
 

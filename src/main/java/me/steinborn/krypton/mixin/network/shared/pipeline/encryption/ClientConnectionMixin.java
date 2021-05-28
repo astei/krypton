@@ -20,11 +20,13 @@ public class ClientConnectionMixin implements ClientConnectionEncryptionExtensio
 
     @Override
     public void setupEncryption(SecretKey key) throws GeneralSecurityException {
-        VelocityCipher decryption = Natives.cipher.get().forDecryption(key);
-        VelocityCipher encryption = Natives.cipher.get().forEncryption(key);
+        if (!this.encrypted) {
+            VelocityCipher decryption = Natives.cipher.get().forDecryption(key);
+            VelocityCipher encryption = Natives.cipher.get().forEncryption(key);
 
-        this.encrypted = true;
-        this.channel.pipeline().addBefore("splitter", "decrypt", new MinecraftCipherDecoder(decryption));
-        this.channel.pipeline().addBefore("prepender", "encrypt", new MinecraftCipherEncoder(encryption));
+            this.encrypted = true;
+            this.channel.pipeline().addBefore("splitter", "decrypt", new MinecraftCipherDecoder(decryption));
+            this.channel.pipeline().addBefore("prepender", "encrypt", new MinecraftCipherEncoder(encryption));
+        }
     }
 }

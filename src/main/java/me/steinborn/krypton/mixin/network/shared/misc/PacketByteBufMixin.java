@@ -3,21 +3,15 @@ package me.steinborn.krypton.mixin.network.shared.misc;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.EncoderException;
-import me.steinborn.krypton.mod.shared.KryptonSharedInitializer;
 import me.steinborn.krypton.mod.shared.network.util.VarIntUtil;
 import net.minecraft.network.PacketByteBuf;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.atomic.LongAdder;
 
 @Mixin(PacketByteBuf.class)
 public abstract class PacketByteBufMixin extends ByteBuf {

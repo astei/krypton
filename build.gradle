@@ -1,7 +1,6 @@
 plugins {
     id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
-    id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
 repositories {
@@ -22,6 +21,9 @@ configurations {
 }
 
 dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -31,10 +33,9 @@ dependencies {
     // You may need to force-disable transitiveness on them.
 }
 
-shadowJar {
-    configurations = [project.configurations.shade]
+test {
+    useJUnitPlatform()
 }
-
 
 processResources {
     inputs.property "version", project.version

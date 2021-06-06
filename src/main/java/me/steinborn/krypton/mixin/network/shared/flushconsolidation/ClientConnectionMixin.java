@@ -57,12 +57,11 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
             }
             doSendPacket(packet, callback);
         } else {
-            // In newer versions of Netty, we can avoid wakeups using arbitrary tasks by implementing
-            // AbstractEventExecutor.LazyTask. But we are targeting an older version of Netty and don't
-            // have that luxury. So we'll be a bit clever. If we directly invoke Channel#write, it will
-            // use a WriteTask and that doesn't wake up the event loop. This does have a few preconditions
-            // (we can't be transitioning states, and for simplicity, no callbacks are supported) but if
-            // met this minimizes wakeups when we don't need to immediately do a syscall.
+            // Note: In newer versions of Netty, we could use AbstractEventExecutor.LazyRunnable to avoid a wakeup.
+            // This has the advantage of requiring slightly less code.
+            // However, in practice, (almost) every write will use a WriteTask which doesn't wake up the event loop.
+            // The only exceptions are transitioning states (very rare) and when a listener is provided (but this is
+            // only upon disconnect of a client). So we can sit back and enjoy the GC savings.
             if (!newState && callback == null) {
                 ChannelPromise voidPromise = this.channel.voidPromise();
                 if (this.autoFlush.get()) {

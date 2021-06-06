@@ -36,7 +36,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
 
     @Shadow protected abstract boolean doesNotGenerateChunks(ServerPlayerEntity player);
 
-    @Shadow protected abstract ChunkSectionPos method_20726(ServerPlayerEntity serverPlayerEntity);
+    @Shadow protected abstract ChunkSectionPos updateWatchedSection(ServerPlayerEntity serverPlayerEntity);
 
     @Shadow
     private static int getChebyshevDistance(ChunkPos pos, int x, int z) {
@@ -52,23 +52,23 @@ public abstract class ThreadedAnvilChunkStorageMixin {
      * @reason Add support for flush consolidation
      */
     @Overwrite
-    public void updateCameraPosition(ServerPlayerEntity player) {
+    public void updatePosition(ServerPlayerEntity player) {
         for (ThreadedAnvilChunkStorage.EntityTracker entityTracker : this.entityTrackers.values()) {
             if (entityTracker.entity == player) {
-                entityTracker.updateCameraPosition(this.world.getPlayers());
+                entityTracker.updateTrackedStatus(this.world.getPlayers());
             } else {
-                entityTracker.updateCameraPosition(player);
+                entityTracker.updateTrackedStatus(player);
             }
         }
 
-        ChunkSectionPos oldPos = player.getCameraPosition();
+        ChunkSectionPos oldPos = player.getWatchedSection();
         ChunkSectionPos newPos = ChunkSectionPos.from(player);
         boolean isWatchingWorld = this.playerChunkWatchingManager.isWatchDisabled(player);
         boolean noChunkGen = this.doesNotGenerateChunks(player);
         boolean movedSections = !oldPos.equals(newPos);
 
         if (movedSections || isWatchingWorld != noChunkGen) {
-            this.method_20726(player);
+            this.updateWatchedSection(player);
 
             if (!isWatchingWorld) {
                 this.ticketManager.handleChunkLeave(oldPos, player);
@@ -159,14 +159,14 @@ public abstract class ThreadedAnvilChunkStorageMixin {
         }
     }
 
-    @Inject(method = "tickPlayerMovement", at = @At("HEAD"))
+    @Inject(method = "tickEntityMovement", at = @At("HEAD"))
     public void disableAutoFlushForEntityTracking(CallbackInfo info) {
         for (ServerPlayerEntity player : world.getPlayers()) {
             AutoFlushUtil.setAutoFlush(player, false);
         }
     }
 
-    @Inject(method = "tickPlayerMovement", at = @At("RETURN"))
+    @Inject(method = "tickEntityMovement", at = @At("RETURN"))
     public void enableAutoFlushForEntityTracking(CallbackInfo info) {
         for (ServerPlayerEntity player : world.getPlayers()) {
             AutoFlushUtil.setAutoFlush(player, true);

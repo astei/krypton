@@ -11,18 +11,15 @@ import java.util.List;
 
 public class MinecraftCompressDecoder extends ByteToMessageDecoder {
 
-  private static final int VANILLA_MAXIMUM_UNCOMPRESSED_SIZE = 2 * 1024 * 1024; // 2MiB
-  private static final int HARD_MAXIMUM_UNCOMPRESSED_SIZE = 16 * 1024 * 1024; // 16MiB
-
-  private static final int UNCOMPRESSED_CAP =
-      Boolean.getBoolean("velocity.increased-compression-cap")
-          ? HARD_MAXIMUM_UNCOMPRESSED_SIZE : VANILLA_MAXIMUM_UNCOMPRESSED_SIZE;
+  private static final int UNCOMPRESSED_CAP = 8 * 1024 * 1024; // 8MiB
 
   private final int threshold;
+  private final boolean validate;
   private final VelocityCompressor compressor;
 
-  public MinecraftCompressDecoder(int threshold, VelocityCompressor compressor) {
+  public MinecraftCompressDecoder(int threshold, boolean validate, VelocityCompressor compressor) {
     this.threshold = threshold;
+    this.validate = validate;
     this.compressor = compressor;
   }
 
@@ -35,12 +32,14 @@ public class MinecraftCompressDecoder extends ByteToMessageDecoder {
       if (claimedUncompressedSize == 0) {
         out.add(packetBuf.readBytes(packetBuf.readableBytes()));
       } else {
-        if (claimedUncompressedSize < this.threshold) {
-          throw new DecoderException("Badly compressed packet - size of " + claimedUncompressedSize + " is below server threshold of " + this.threshold);
-        }
+        if (validate) {
+          if (claimedUncompressedSize < this.threshold) {
+            throw new DecoderException("Badly compressed packet - size of " + claimedUncompressedSize + " is below server threshold of " + this.threshold);
+          }
 
-        if (claimedUncompressedSize > UNCOMPRESSED_CAP) {
-          throw new DecoderException("Badly compressed packet - size of " + claimedUncompressedSize + " is larger than maximum of " + UNCOMPRESSED_CAP);
+          if (claimedUncompressedSize > UNCOMPRESSED_CAP) {
+            throw new DecoderException("Badly compressed packet - size of " + claimedUncompressedSize + " is larger than maximum of " + UNCOMPRESSED_CAP);
+          }
         }
 
         ByteBuf compatibleIn = com.velocitypowered.natives.util.MoreByteBufUtils.ensureCompatible(ctx.alloc(), compressor, in);

@@ -9,7 +9,7 @@ import net.minecraft.network.PacketByteBuf;
 
 public class MinecraftCompressEncoder extends MessageToByteEncoder<ByteBuf> {
 
-  private final int threshold;
+  private int threshold;
   private final VelocityCompressor compressor;
 
   public MinecraftCompressEncoder(int threshold, VelocityCompressor compressor) {
@@ -54,5 +54,9 @@ public class MinecraftCompressEncoder extends MessageToByteEncoder<ByteBuf> {
   @Override
   public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
     compressor.close();
+  }
+
+  public void setThreshold(int threshold) {
+    this.threshold = threshold;
   }
 }

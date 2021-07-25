@@ -13,7 +13,7 @@ public class MinecraftCompressDecoder extends ByteToMessageDecoder {
 
   private static final int UNCOMPRESSED_CAP = 8 * 1024 * 1024; // 8MiB
 
-  private final int threshold;
+  private int threshold;
   private final boolean validate;
   private final VelocityCompressor compressor;
 
@@ -57,6 +57,10 @@ public class MinecraftCompressDecoder extends ByteToMessageDecoder {
       }
 
     }
+  }
+
+  public void setThreshold(int threshold) {
+    this.threshold = threshold;
   }
 
   @Override

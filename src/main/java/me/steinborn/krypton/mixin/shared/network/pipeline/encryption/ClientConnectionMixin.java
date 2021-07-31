@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mixin.network.shared.pipeline.encryption;
+package me.steinborn.krypton.mixin.shared.network.pipeline.encryption;
 
 import com.velocitypowered.natives.encryption.VelocityCipher;
 import com.velocitypowered.natives.util.Natives;

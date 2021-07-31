@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mixin.network.shared.flushconsolidation;
+package me.steinborn.krypton.mixin.shared.network.flushconsolidation;
 
 import net.minecraft.server.network.EntityTrackerEntry;
 import net.minecraft.server.network.ServerPlayerEntity;

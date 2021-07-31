@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mixin.network.shared.flushconsolidation;
+package me.steinborn.krypton.mixin.shared.network.flushconsolidation;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import me.steinborn.krypton.mod.shared.network.util.AutoFlushUtil;

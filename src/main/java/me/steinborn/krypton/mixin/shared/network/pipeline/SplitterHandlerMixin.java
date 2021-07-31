@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mixin.network.shared.pipeline;
+package me.steinborn.krypton.mixin.shared.network.pipeline;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

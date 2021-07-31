@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mixin.network.shared.misc;
+package me.steinborn.krypton.mixin.shared.network.microopt;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Multiple micro-optimizations for packet writing.
+ */
 @Mixin(PacketByteBuf.class)
 public abstract class PacketByteBufMixin extends ByteBuf {
 

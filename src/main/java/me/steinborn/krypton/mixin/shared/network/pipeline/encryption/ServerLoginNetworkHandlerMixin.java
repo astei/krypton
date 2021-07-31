@@ -1,16 +1,13 @@
-package me.steinborn.krypton.mixin.network.shared.pipeline.encryption;
+package me.steinborn.krypton.mixin.shared.network.pipeline.encryption;
 
 import me.steinborn.krypton.mod.shared.network.ClientConnectionEncryptionExtension;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

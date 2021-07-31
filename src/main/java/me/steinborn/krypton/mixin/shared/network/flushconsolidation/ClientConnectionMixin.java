@@ -1,4 +1,4 @@
-package me.steinborn.krypton.mixin.network.shared.flushconsolidation;
+package me.steinborn.krypton.mixin.shared.network.flushconsolidation;
 
 import io.netty.channel.*;
 import io.netty.util.concurrent.Future;

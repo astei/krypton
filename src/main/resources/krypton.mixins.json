@@ -3,16 +3,26 @@
   "minVersion": "0.8",
   "package": "me.steinborn.krypton.mixin",
   "compatibilityLevel": "JAVA_16",
+  "client": [
+    "client.fastchunkentityaccess.ClientWorldMixin"
+  ],
+  "server": [
+    "server.fastchunkentityaccess.ServerWorldMixin"
+  ],
   "mixins": [
-    "network.shared.flushconsolidation.ClientConnectionMixin",
-    "network.shared.flushconsolidation.EntityTrackerMixin",
-    "network.shared.flushconsolidation.ThreadedAnvilChunkStorageMixin",
-    "network.shared.misc.PacketByteBufMixin",
-    "network.shared.pipeline.LegacyQueryHandlerMixin",
-    "network.shared.pipeline.SplitterHandlerMixin",
-    "network.shared.pipeline.compression.ClientConnectionMixin",
-    "network.shared.pipeline.encryption.ClientConnectionMixin",
-    "network.shared.pipeline.encryption.ServerLoginNetworkHandlerMixin"
+    "shared.fastchunkentityaccess.EntityTrackingSectionAccessor",
+    "shared.fastchunkentityaccess.SectionedEntityCacheMixin",
+    "shared.network.avoidwork.ThreadedAnvilChunkStorageMixin",
+    "shared.network.flushconsolidation.ClientConnectionMixin",
+    "shared.network.flushconsolidation.EntityTrackerMixin",
+    "shared.network.flushconsolidation.ThreadedAnvilChunkStorageMixin",
+    "shared.network.microopt.TacsTrackedEntityMixin",
+    "shared.network.misc.PacketByteBufMixin",
+    "shared.network.pipeline.LegacyQueryHandlerMixin",
+    "shared.network.pipeline.SplitterHandlerMixin",
+    "shared.network.pipeline.compression.ClientConnectionMixin",
+    "shared.network.pipeline.encryption.ClientConnectionMixin",
+    "shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

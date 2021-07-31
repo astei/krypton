@@ -17,7 +17,7 @@
     "shared.network.flushconsolidation.EntityTrackerMixin",
     "shared.network.flushconsolidation.ThreadedAnvilChunkStorageMixin",
     "shared.network.microopt.TacsTrackedEntityMixin",
-    "shared.network.misc.PacketByteBufMixin",
+    "shared.network.microopt.PacketByteBufMixin",
     "shared.network.pipeline.LegacyQueryHandlerMixin",
     "shared.network.pipeline.SplitterHandlerMixin",
     "shared.network.pipeline.compression.ClientConnectionMixin",

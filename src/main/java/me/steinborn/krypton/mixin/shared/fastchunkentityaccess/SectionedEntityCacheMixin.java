@@ -37,7 +37,7 @@ public abstract class SectionedEntityCacheMixin implements WorldEntityByChunkAcc
             final long key = sectionsIterator.nextLong();
             final EntityTrackingSection<Entity> value = this.trackingSections.get(key);
             if (value != null && value.getStatus().shouldTrack()) {
-                entities.addAll(((EntityTrackingSectionAccessor<Entity>) trackingSections.get(key)).getCollection());
+                entities.addAll(((EntityTrackingSectionAccessor<Entity>) value).getCollection());
             }
         }
 

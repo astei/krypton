@@ -2,6 +2,7 @@ package me.steinborn.krypton.mixin.shared.network.avoidwork;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import me.steinborn.krypton.mod.shared.WorldEntityByChunkAccess;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
@@ -26,6 +27,8 @@ import java.util.List;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
 public class ThreadedAnvilChunkStorageMixin {
+
+    private static final Int2ObjectMap<Entity> DUMMY = Int2ObjectMaps.unmodifiable(new Int2ObjectOpenHashMap<>());
 
     @Shadow @Final private Int2ObjectMap<ThreadedAnvilChunkStorage.EntityTracker> entityTrackers;
 
@@ -66,6 +69,6 @@ public class ThreadedAnvilChunkStorageMixin {
 
     @Redirect(method = "sendChunkDataPackets", at = @At(value = "FIELD", target = "Lnet/minecraft/server/world/ThreadedAnvilChunkStorage;entityTrackers:Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;", opcode = Opcodes.GETFIELD))
     public Int2ObjectMap<Entity> sendChunkDataPackets$nullifyRest(ThreadedAnvilChunkStorage tacs) {
-        return Int2ObjectMaps.emptyMap();
+        return DUMMY;
     }
 }

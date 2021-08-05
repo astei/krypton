@@ -6,12 +6,11 @@
   "client": [
     "client.fastchunkentityaccess.ClientWorldMixin"
   ],
-  "server": [
-    "server.fastchunkentityaccess.ServerWorldMixin"
-  ],
   "mixins": [
+    "server.fastchunkentityaccess.ServerWorldMixin",
     "shared.fastchunkentityaccess.EntityTrackingSectionAccessor",
     "shared.fastchunkentityaccess.SectionedEntityCacheMixin",
+    "shared.network.avoidwork.ThreadedAnvilChunkStorageMixin",
     "shared.network.flushconsolidation.ClientConnectionMixin",
     "shared.network.flushconsolidation.EntityTrackerMixin",
     "shared.network.flushconsolidation.ThreadedAnvilChunkStorageMixin",

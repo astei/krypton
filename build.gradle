@@ -32,7 +32,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation include("com.velocitypowered:velocity-native:1.1.0-SNAPSHOT")
+    modImplementation include("com.velocitypowered:velocity-native:4.0.0-SNAPSHOT")
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
 }

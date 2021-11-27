@@ -3,6 +3,7 @@ package me.steinborn.krypton.mixin.shared.network.flushconsolidation;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import me.steinborn.krypton.mod.shared.network.util.AutoFlushUtil;
 import net.minecraft.network.Packet;
+import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.server.network.DebugInfoSender;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkHolder;
@@ -13,6 +14,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.chunk.WorldChunk;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,13 +41,9 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     @Shadow protected abstract ChunkSectionPos updateWatchedSection(ServerPlayerEntity serverPlayerEntity);
 
     @Shadow
-    private static int getChebyshevDistance(ChunkPos pos, int x, int z) {
+    private static boolean isWithinDistance(ChunkPos chunkPos, int sectionX, int sectionZ, int distance) {
         throw new AssertionError("pedantic");
     }
-
-    @Shadow public abstract void sendChunkDataPackets(ServerPlayerEntity player, Packet<?>[] packets, WorldChunk chunk);
-
-    @Shadow @Nullable protected abstract ChunkHolder getChunkHolder(long pos);
 
     /**
      * @author Andrew Steinborn
@@ -116,23 +114,23 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                 for (int curX = minSendChunkX; curX <= q; ++curX) {
                     for (int curZ = maxSendChunkZ; curZ <= r; ++curZ) {
                         ChunkPos chunkPos = new ChunkPos(curX, curZ);
-                        boolean inOld = getChebyshevDistance(chunkPos, oldChunkX, oldChunkZ) <= this.watchDistance;
-                        boolean inNew = getChebyshevDistance(chunkPos, newChunkX, newChunkZ) <= this.watchDistance;
-                        this.sendPacketsForChunk(player, chunkPos, new Packet[2], inOld, inNew);
+                        boolean inOld = isWithinDistance(chunkPos, oldChunkX, oldChunkZ, this.watchDistance);
+                        boolean inNew = isWithinDistance(chunkPos, newChunkX, newChunkZ, this.watchDistance);
+                        this.sendWatchPackets(player, chunkPos, new MutableObject<>(), inOld, inNew);
                     }
                 }
             } else {
                 for (int curX = oldChunkX - this.watchDistance; curX <= oldChunkX + this.watchDistance; ++curX) {
                     for (int curZ = oldChunkZ - this.watchDistance; curZ <= oldChunkZ + this.watchDistance; ++curZ) {
                         ChunkPos pos = new ChunkPos(curX, curZ);
-                        this.sendPacketsForChunk(player, pos, new Packet[2], true, false);
+                        this.sendWatchPackets(player, pos, new MutableObject<>(), true, false);
                     }
                 }
 
                 for (int curX = newChunkX - this.watchDistance; curX <= newChunkX + this.watchDistance; ++curX) {
                     for (int curZ = newChunkZ - this.watchDistance; curZ <= newChunkZ + this.watchDistance; ++curZ) {
                         ChunkPos pos = new ChunkPos(curX, curZ);
-                        this.sendPacketsForChunk(player, pos, new Packet[2], false, true);
+                        this.sendWatchPackets(player, pos, new MutableObject<>(), false, true);
                     }
                 }
             }
@@ -141,23 +139,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
         }
     }
 
-    protected void sendPacketsForChunk(ServerPlayerEntity player, ChunkPos pos, Packet<?>[] packets, boolean withinMaxWatchDistance, boolean withinViewDistance) {
-        if (withinViewDistance && !withinMaxWatchDistance) {
-            ChunkHolder chunkHolder = this.getChunkHolder(pos.toLong());
-            if (chunkHolder != null) {
-                WorldChunk worldChunk = chunkHolder.getWorldChunk();
-                if (worldChunk != null) {
-                    this.sendChunkDataPackets(player, packets, worldChunk);
-                }
-
-                DebugInfoSender.sendChunkWatchingChange(this.world, pos);
-            }
-        }
-
-        if (!withinViewDistance && withinMaxWatchDistance) {
-            player.sendUnloadChunkPacket(pos);
-        }
-    }
+    @Shadow
+    protected abstract void sendWatchPackets(ServerPlayerEntity player, ChunkPos pos, MutableObject<ChunkDataS2CPacket> mutableObject, boolean withinMaxWatchDistance, boolean withinViewDistance);
 
     @Inject(method = "tickEntityMovement", at = @At("HEAD"))
     public void disableAutoFlushForEntityTracking(CallbackInfo info) {

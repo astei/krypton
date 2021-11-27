@@ -6,11 +6,13 @@ import me.steinborn.krypton.mod.shared.WorldEntityByChunkAccess;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.network.Packet;
+import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityAttachS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityPassengersSetS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.world.chunk.WorldChunk;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,7 +32,7 @@ public class ThreadedAnvilChunkStorageMixin {
     @Shadow @Final private Int2ObjectMap<ThreadedAnvilChunkStorage.EntityTracker> entityTrackers;
 
     @Inject(method = "sendChunkDataPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/DebugInfoSender;sendChunkWatchingChange(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/ChunkPos;)V", shift = At.Shift.AFTER, by = 1))
-    public void sendChunkDataPackets$beSmart(ServerPlayerEntity player, Packet<?>[] packets, WorldChunk chunk, CallbackInfo ci) {
+    public void sendChunkDataPackets$beSmart(ServerPlayerEntity player, MutableObject<ChunkDataS2CPacket> mutableObject, WorldChunk chunk, CallbackInfo ci) {
         // Synopsis: when sending chunk data to the player, sendChunkDataPackets iterates over EVERY tracked entity in
         // the world, when it doesn't have to do so - we only need entities in the current chunk. A similar optimization
         // is present in Paper.

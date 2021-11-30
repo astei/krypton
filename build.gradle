@@ -7,6 +7,7 @@ repositories {
     maven {
         url "https://repo.velocitypowered.com/snapshots/"
     }
+    maven { name 'Jitpack'; url 'https://jitpack.io' }
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -24,13 +25,13 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
-    //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation include("com.velocitypowered:velocity-native:1.1.0-SNAPSHOT")
-    // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
-    // You may need to force-disable transitiveness on them.
+
+    // Include LazyDFU so starting the server and client at the same time doesn't turn my computer into a fighter jet
+    modRuntime "com.github.astei:lazydfu:${project.lazydfu_version}"
 }
 
 test {

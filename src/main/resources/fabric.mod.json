@@ -31,7 +31,7 @@
   "accessWidener": "krypton.accesswidener",
   "depends": {
     "fabricloader": ">=0.11.3",
-    "minecraft": ">=1.17.1"
+    "minecraft": ">=1.18"
   },
 
   "custom": {

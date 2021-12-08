@@ -41,7 +41,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     @Shadow protected abstract ChunkSectionPos updateWatchedSection(ServerPlayerEntity serverPlayerEntity);
 
     @Shadow
-    private static boolean isWithinDistance(ChunkPos chunkPos, int sectionX, int sectionZ, int distance) {
+    public static boolean method_39975(int x1, int y1, int x2, int y2, int maxDistance) {
+        // PAIL: isWithinEuclideanDistance(x1, y1, x2, y2, maxDistance)
         throw new AssertionError("pedantic");
     }
 
@@ -51,6 +52,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
      */
     @Overwrite
     public void updatePosition(ServerPlayerEntity player) {
+        // TODO: optimize this further by only considering entities that the player is close to.
+        //       use the FastChunkEntityAccess magic to do this.
         for (ThreadedAnvilChunkStorage.EntityTracker entityTracker : this.entityTrackers.values()) {
             if (entityTracker.entity == player) {
                 entityTracker.updateTrackedStatus(this.world.getPlayers());
@@ -114,8 +117,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                 for (int curX = minSendChunkX; curX <= q; ++curX) {
                     for (int curZ = maxSendChunkZ; curZ <= r; ++curZ) {
                         ChunkPos chunkPos = new ChunkPos(curX, curZ);
-                        boolean inOld = isWithinDistance(chunkPos, oldChunkX, oldChunkZ, this.watchDistance);
-                        boolean inNew = isWithinDistance(chunkPos, newChunkX, newChunkZ, this.watchDistance);
+                        boolean inOld = method_39975(curX, curZ, oldChunkX, oldChunkZ, this.watchDistance);
+                        boolean inNew = method_39975(curX, curZ, newChunkX, newChunkZ, this.watchDistance);
                         this.sendWatchPackets(player, chunkPos, new MutableObject<>(), inOld, inNew);
                     }
                 }

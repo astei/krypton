@@ -130,8 +130,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                     }
                 }
 
-                for (int curX = oldChunkX - this.watchDistance - 1; curX <= newChunkX + this.watchDistance + 1; ++curX) {
-                    for (int curZ = oldChunkZ - this.watchDistance - 1; curZ <= newChunkZ + this.watchDistance + 1; ++curZ) {
+                for (int curX = newChunkX - this.watchDistance - 1; curX <= newChunkX + this.watchDistance + 1; ++curX) {
+                    for (int curZ = newChunkZ - this.watchDistance - 1; curZ <= newChunkZ + this.watchDistance + 1; ++curZ) {
                         ChunkPos pos = new ChunkPos(curX, curZ);
                         this.sendWatchPackets(player, pos, new MutableObject<>(), false, true);
                     }

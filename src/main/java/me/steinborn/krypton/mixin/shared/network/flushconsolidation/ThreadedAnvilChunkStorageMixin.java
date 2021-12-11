@@ -41,7 +41,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     @Shadow protected abstract ChunkSectionPos updateWatchedSection(ServerPlayerEntity serverPlayerEntity);
 
     @Shadow
-    private static boolean isWithinDistance(ChunkPos chunkPos, int sectionX, int sectionZ, int distance) {
+    public static boolean method_39975(int x1, int y1, int x2, int y2, int maxDistance) {
+        // PAIL: isWithinEuclideanDistance(x1, y1, x2, y2, maxDistance)
         throw new AssertionError("pedantic");
     }
 
@@ -51,6 +52,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
      */
     @Overwrite
     public void updatePosition(ServerPlayerEntity player) {
+        // TODO: optimize this further by only considering entities that the player is close to.
+        //       use the FastChunkEntityAccess magic to do this.
         for (ThreadedAnvilChunkStorage.EntityTracker entityTracker : this.entityTrackers.values()) {
             if (entityTracker.entity == player) {
                 entityTracker.updateTrackedStatus(this.world.getPlayers());
@@ -106,29 +109,29 @@ public abstract class ThreadedAnvilChunkStorageMixin {
             int newChunkZ = MathHelper.floor(player.getZ()) >> 4;
 
             if (Math.abs(oldChunkX - newChunkX) <= this.watchDistance * 2 && Math.abs(oldChunkZ - newChunkZ) <= this.watchDistance * 2) {
-                int minSendChunkX = Math.min(newChunkX, oldChunkX) - this.watchDistance;
-                int maxSendChunkZ = Math.min(newChunkZ, oldChunkZ) - this.watchDistance;
-                int q = Math.max(newChunkX, oldChunkX) + this.watchDistance;
-                int r = Math.max(newChunkZ, oldChunkZ) + this.watchDistance;
+                int minSendChunkX = Math.min(newChunkX, oldChunkX) - this.watchDistance - 1;
+                int minSendChunkZ = Math.min(newChunkZ, oldChunkZ) - this.watchDistance - 1;
+                int maxSendChunkX = Math.max(newChunkX, oldChunkX) + this.watchDistance + 1;
+                int maxSendChunkZ = Math.max(newChunkZ, oldChunkZ) + this.watchDistance + 1;
 
-                for (int curX = minSendChunkX; curX <= q; ++curX) {
-                    for (int curZ = maxSendChunkZ; curZ <= r; ++curZ) {
+                for (int curX = minSendChunkX; curX <= maxSendChunkX; ++curX) {
+                    for (int curZ = minSendChunkZ; curZ <= maxSendChunkZ; ++curZ) {
                         ChunkPos chunkPos = new ChunkPos(curX, curZ);
-                        boolean inOld = isWithinDistance(chunkPos, oldChunkX, oldChunkZ, this.watchDistance);
-                        boolean inNew = isWithinDistance(chunkPos, newChunkX, newChunkZ, this.watchDistance);
+                        boolean inOld = method_39975(curX, curZ, oldChunkX, oldChunkZ, this.watchDistance);
+                        boolean inNew = method_39975(curX, curZ, newChunkX, newChunkZ, this.watchDistance);
                         this.sendWatchPackets(player, chunkPos, new MutableObject<>(), inOld, inNew);
                     }
                 }
             } else {
-                for (int curX = oldChunkX - this.watchDistance; curX <= oldChunkX + this.watchDistance; ++curX) {
-                    for (int curZ = oldChunkZ - this.watchDistance; curZ <= oldChunkZ + this.watchDistance; ++curZ) {
+                for (int curX = oldChunkX - this.watchDistance - 1; curX <= oldChunkX + this.watchDistance + 1; ++curX) {
+                    for (int curZ = oldChunkZ - this.watchDistance - 1; curZ <= oldChunkZ + this.watchDistance + 1; ++curZ) {
                         ChunkPos pos = new ChunkPos(curX, curZ);
                         this.sendWatchPackets(player, pos, new MutableObject<>(), true, false);
                     }
                 }
 
-                for (int curX = newChunkX - this.watchDistance; curX <= newChunkX + this.watchDistance; ++curX) {
-                    for (int curZ = newChunkZ - this.watchDistance; curZ <= newChunkZ + this.watchDistance; ++curZ) {
+                for (int curX = newChunkX - this.watchDistance - 1; curX <= newChunkX + this.watchDistance + 1; ++curX) {
+                    for (int curZ = newChunkZ - this.watchDistance - 1; curZ <= newChunkZ + this.watchDistance + 1; ++curZ) {
                         ChunkPos pos = new ChunkPos(curX, curZ);
                         this.sendWatchPackets(player, pos, new MutableObject<>(), false, true);
                     }

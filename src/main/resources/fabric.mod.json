@@ -33,7 +33,6 @@
     "fabricloader": ">=0.11.3",
     "minecraft": ">=1.18"
   },
-
   "custom": {
     "_lithium_mixin_comment": "We disable the player_chunk_tick mixin as Krypton contains a superior version that does flush consolidation.",
     "lithium:options": {

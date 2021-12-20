@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "package": "me.steinborn.krypton.mixin",
   "compatibilityLevel": "JAVA_16",
+  "plugin": "me.steinborn.krypton.mod.shared.KryptonMixinPlugin",
   "client": [
     "client.fastchunkentityaccess.ClientWorldMixin"
   ],

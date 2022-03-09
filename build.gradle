@@ -5,7 +5,7 @@ plugins {
 
 repositories {
     maven {
-        url "https://repo.velocitypowered.com/snapshots/"
+        url "https://papermc.io/repo/repository/maven-public/"
     }
     maven { name 'Jitpack'; url 'https://jitpack.io' }
 }
@@ -28,10 +28,10 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation include("com.velocitypowered:velocity-native:1.1.0-SNAPSHOT")
+    modImplementation include("com.velocitypowered:velocity-native:3.1.2-SNAPSHOT")
 
     // Include LazyDFU so starting the server and client at the same time doesn't turn my computer into a fighter jet
-    modRuntime "com.github.astei:lazydfu:${project.lazydfu_version}"
+    modRuntimeOnly "com.github.astei:lazydfu:${project.lazydfu_version}"
 }
 
 test {

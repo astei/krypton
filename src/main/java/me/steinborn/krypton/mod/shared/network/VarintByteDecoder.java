@@ -9,6 +9,14 @@ public class VarintByteDecoder implements ByteProcessor {
 
     @Override
     public boolean process(byte k) {
+        if (k == 0 && bytesRead == 0) {
+            // tentatively say it's invalid, but there's a possibility of redemption
+            result = DecodeResult.RUN_OF_ZEROES;
+            return true;
+        }
+        if (result == DecodeResult.RUN_OF_ZEROES) {
+            return false;
+        }
         readVarint |= (k & 0x7F) << bytesRead++ * 7;
         if (bytesRead > 3) {
             result = DecodeResult.TOO_BIG;
@@ -21,11 +29,11 @@ public class VarintByteDecoder implements ByteProcessor {
         return true;
     }
 
-    public int readVarint() {
+    public int getReadVarint() {
         return readVarint;
     }
 
-    public int varintBytes() {
+    public int getBytesRead() {
         return bytesRead;
     }
 
@@ -42,6 +50,7 @@ public class VarintByteDecoder implements ByteProcessor {
     public enum DecodeResult {
         SUCCESS,
         TOO_SHORT,
-        TOO_BIG
+        TOO_BIG,
+        RUN_OF_ZEROES
     }
 }

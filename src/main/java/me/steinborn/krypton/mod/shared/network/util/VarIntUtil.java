@@ -1,7 +1,8 @@
 package me.steinborn.krypton.mod.shared.network.util;
 
 /**
- * Maps VarInt byte sizes to a lookup table of 64 entries.
+ * Maps VarInt byte sizes to a lookup table corresponding to the number of bits in the integer,
+ * from zero to 32.
  */
 public class VarIntUtil {
     private static final int[] VARINT_EXACT_BYTE_LENGTHS = new int[33];

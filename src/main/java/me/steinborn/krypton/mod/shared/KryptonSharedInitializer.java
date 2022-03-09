@@ -20,12 +20,6 @@ public class KryptonSharedInitializer implements ModInitializer {
         if (System.getProperty("io.netty.allocator.maxOrder") == null) {
             System.setProperty("io.netty.allocator.maxOrder", "9");
         }
-
-        // Disable the resource leak detector by default as it reduces performance. Allow the user to
-        // override this if desired.
-        if (System.getProperty("io.netty.leakDetection.level") == null) {
-            ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
-        }
     }
 
     @Override

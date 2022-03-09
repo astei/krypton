@@ -9,6 +9,8 @@
   ],
   "mixins": [
     "server.fastchunkentityaccess.ServerWorldMixin",
+    "shared.bugfix.CustomPayloadS2CPacketFixMemoryLeakMixin",
+    "shared.debugaid.ResourceLeakDetectorDisableConditionalMixin",
     "shared.fastchunkentityaccess.EntityTrackingSectionAccessor",
     "shared.fastchunkentityaccess.SectionedEntityCacheMixin",
     "shared.network.avoidwork.ThreadedAnvilChunkStorageMixin",

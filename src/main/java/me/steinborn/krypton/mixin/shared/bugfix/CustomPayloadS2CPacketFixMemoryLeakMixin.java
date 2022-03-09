@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class CustomPayloadS2CPacketFixMemoryLeakMixin {
 
     @Redirect(method = "<init>(Lnet/minecraft/network/PacketByteBuf;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketByteBuf;readBytes(I)Lio/netty/buffer/ByteBuf;"))
-    private ByteBuf deserialize$shouldExplicitlyCopyAsUnschooledBufferDueToShenanigans(PacketByteBuf instance, int length) {
+    private ByteBuf deserialize$shouldExplicitlyCopyAsUnpooledBufferDueToShenanigans(PacketByteBuf instance, int length) {
         return Unpooled.copiedBuffer(instance.readSlice(length));
     }
 }

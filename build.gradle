@@ -31,7 +31,7 @@ dependencies {
     modImplementation include("com.velocitypowered:velocity-native:3.1.2-SNAPSHOT")
 
     // Include LazyDFU so starting the server and client at the same time doesn't turn my computer into a fighter jet
-    modRuntimeOnly "com.github.astei:lazydfu:${project.lazydfu_version}"
+    // modRuntimeOnly "com.github.astei:lazydfu:${project.lazydfu_version}"
 }
 
 test {

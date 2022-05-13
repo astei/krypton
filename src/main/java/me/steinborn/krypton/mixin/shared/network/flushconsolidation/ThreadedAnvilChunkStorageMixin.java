@@ -24,6 +24,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Mixes into various methods in {@code ThreadedAnvilChunkStorage} to utilize flush consolidation for sending chunks
  * all at once to the client. Helpful for heavy server activity or flying very quickly.
@@ -41,7 +44,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     @Shadow protected abstract ChunkSectionPos updateWatchedSection(ServerPlayerEntity serverPlayerEntity);
 
     @Shadow
-    public static boolean method_39975(int x1, int y1, int x2, int y2, int maxDistance) {
+    public static boolean isWithinDistance(int x1, int y1, int x2, int y2, int maxDistance) {
         // PAIL: isWithinEuclideanDistance(x1, y1, x2, y2, maxDistance)
         throw new AssertionError("pedantic");
     }
@@ -109,31 +112,39 @@ public abstract class ThreadedAnvilChunkStorageMixin {
             int newChunkZ = MathHelper.floor(player.getZ()) >> 4;
 
             if (Math.abs(oldChunkX - newChunkX) <= this.watchDistance * 2 && Math.abs(oldChunkZ - newChunkZ) <= this.watchDistance * 2) {
-                int minSendChunkX = Math.min(newChunkX, oldChunkX) - this.watchDistance - 1;
-                int minSendChunkZ = Math.min(newChunkZ, oldChunkZ) - this.watchDistance - 1;
-                int maxSendChunkX = Math.max(newChunkX, oldChunkX) + this.watchDistance + 1;
-                int maxSendChunkZ = Math.max(newChunkZ, oldChunkZ) + this.watchDistance + 1;
+                for (int d = 0; d <= this.watchDistance; d++) {
+                    int minSendChunkX = Math.min(newChunkX, oldChunkX) - d - 1;
+                    int minSendChunkZ = Math.min(newChunkZ, oldChunkZ) - d - 1;
+                    int maxSendChunkX = Math.max(newChunkX, oldChunkX) + d + 1;
+                    int maxSendChunkZ = Math.max(newChunkZ, oldChunkZ) + d + 1;
+                    Set<ChunkPos> seen = new HashSet<>();
 
-                for (int curX = minSendChunkX; curX <= maxSendChunkX; ++curX) {
-                    for (int curZ = minSendChunkZ; curZ <= maxSendChunkZ; ++curZ) {
-                        ChunkPos chunkPos = new ChunkPos(curX, curZ);
-                        boolean inOld = method_39975(curX, curZ, oldChunkX, oldChunkZ, this.watchDistance);
-                        boolean inNew = method_39975(curX, curZ, newChunkX, newChunkZ, this.watchDistance);
-                        this.sendWatchPackets(player, chunkPos, new MutableObject<>(), inOld, inNew);
+                    for (int curX = minSendChunkX; curX <= maxSendChunkX; ++curX) {
+                        for (int curZ = minSendChunkZ; curZ <= maxSendChunkZ; ++curZ) {
+                            ChunkPos chunkPos = new ChunkPos(curX, curZ);
+                            if (!seen.add(chunkPos)) {
+                                continue;
+                            }
+                            boolean inOld = isWithinDistance(curX, curZ, oldChunkX, oldChunkZ, this.watchDistance);
+                            boolean inNew = isWithinDistance(curX, curZ, newChunkX, newChunkZ, this.watchDistance);
+                            this.sendWatchPackets(player, chunkPos, new MutableObject<>(), inOld, inNew);
+                        }
                     }
                 }
             } else {
-                for (int curX = oldChunkX - this.watchDistance - 1; curX <= oldChunkX + this.watchDistance + 1; ++curX) {
-                    for (int curZ = oldChunkZ - this.watchDistance - 1; curZ <= oldChunkZ + this.watchDistance + 1; ++curZ) {
-                        ChunkPos pos = new ChunkPos(curX, curZ);
-                        this.sendWatchPackets(player, pos, new MutableObject<>(), true, false);
+                for (int d = 0; d <= this.watchDistance; d++) {
+                    for (int curX = newChunkX - d - 1; curX <= newChunkX + d + 1; ++curX) {
+                        ChunkPos posTop = new ChunkPos(curX, newChunkZ);
+                        ChunkPos posBottom = new ChunkPos(curX, newChunkZ + d + 1);
+                        this.sendWatchPackets(player, posTop, new MutableObject<>(), false, true);
+                        this.sendWatchPackets(player, posBottom, new MutableObject<>(), false, true);
                     }
-                }
 
-                for (int curX = newChunkX - this.watchDistance - 1; curX <= newChunkX + this.watchDistance + 1; ++curX) {
-                    for (int curZ = newChunkZ - this.watchDistance - 1; curZ <= newChunkZ + this.watchDistance + 1; ++curZ) {
-                        ChunkPos pos = new ChunkPos(curX, curZ);
-                        this.sendWatchPackets(player, pos, new MutableObject<>(), false, true);
+                    for (int curZ = newChunkZ - d - 1; curZ <= newChunkZ + d + 1; ++curZ) {
+                        ChunkPos posLeft = new ChunkPos(newChunkX, curZ);
+                        ChunkPos posRight = new ChunkPos(newChunkX + d + 1, curZ);
+                        this.sendWatchPackets(player, posLeft, new MutableObject<>(), false, true);
+                        this.sendWatchPackets(player, posRight, new MutableObject<>(), false, true);
                     }
                 }
             }

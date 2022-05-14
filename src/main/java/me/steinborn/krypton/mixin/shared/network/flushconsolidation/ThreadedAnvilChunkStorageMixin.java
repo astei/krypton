@@ -111,41 +111,39 @@ public abstract class ThreadedAnvilChunkStorageMixin {
             int newChunkX = MathHelper.floor(player.getX()) >> 4;
             int newChunkZ = MathHelper.floor(player.getZ()) >> 4;
 
+            // TODO: Track chunks the server has sent the player
             if (Math.abs(oldChunkX - newChunkX) <= this.watchDistance * 2 && Math.abs(oldChunkZ - newChunkZ) <= this.watchDistance * 2) {
-                for (int d = 0; d <= this.watchDistance; d++) {
-                    int minSendChunkX = Math.min(newChunkX, oldChunkX) - d - 1;
-                    int minSendChunkZ = Math.min(newChunkZ, oldChunkZ) - d - 1;
-                    int maxSendChunkX = Math.max(newChunkX, oldChunkX) + d + 1;
-                    int maxSendChunkZ = Math.max(newChunkZ, oldChunkZ) + d + 1;
-                    Set<ChunkPos> seen = new HashSet<>();
+                int minSendChunkX = Math.min(newChunkX, oldChunkX) - this.watchDistance - 1;
+                int minSendChunkZ = Math.min(newChunkZ, oldChunkZ) - this.watchDistance - 1;
+                int maxSendChunkX = Math.max(newChunkX, oldChunkX) + this.watchDistance + 1;
+                int maxSendChunkZ = Math.max(newChunkZ, oldChunkZ) + this.watchDistance + 1;
 
-                    for (int curX = minSendChunkX; curX <= maxSendChunkX; ++curX) {
-                        for (int curZ = minSendChunkZ; curZ <= maxSendChunkZ; ++curZ) {
-                            ChunkPos chunkPos = new ChunkPos(curX, curZ);
-                            if (!seen.add(chunkPos)) {
-                                continue;
-                            }
-                            boolean inOld = isWithinDistance(curX, curZ, oldChunkX, oldChunkZ, this.watchDistance);
-                            boolean inNew = isWithinDistance(curX, curZ, newChunkX, newChunkZ, this.watchDistance);
-                            this.sendWatchPackets(player, chunkPos, new MutableObject<>(), inOld, inNew);
-                        }
+                for (int curX = minSendChunkX; curX <= maxSendChunkX; ++curX) {
+                    for (int curZ = minSendChunkZ; curZ <= maxSendChunkZ; ++curZ) {
+                        ChunkPos chunkPos = new ChunkPos(curX, curZ);
+                        boolean inOld = isWithinDistance(curX, curZ, oldChunkX, oldChunkZ, this.watchDistance);
+                        boolean inNew = isWithinDistance(curX, curZ, newChunkX, newChunkZ, this.watchDistance);
+                        this.sendWatchPackets(player, chunkPos, new MutableObject<>(), inOld, inNew);
                     }
                 }
             } else {
-                for (int d = 0; d <= this.watchDistance; d++) {
-                    for (int curX = newChunkX - d - 1; curX <= newChunkX + d + 1; ++curX) {
-                        ChunkPos posTop = new ChunkPos(curX, newChunkZ);
-                        ChunkPos posBottom = new ChunkPos(curX, newChunkZ + d + 1);
-                        this.sendWatchPackets(player, posTop, new MutableObject<>(), false, true);
-                        this.sendWatchPackets(player, posBottom, new MutableObject<>(), false, true);
+                int x = 0, z = 0, dx = 0, dz = -1;
+                int t = this.watchDistance * 2;
+                int maxI = t * t * 2;
+                for(int i = 0; i < maxI; i++){
+                    if ((-this.watchDistance <= x) && (x <= this.watchDistance) && (-this.watchDistance <= z) && (z <= this.watchDistance)){
+                        this.sendWatchPackets(player,
+                            new ChunkPos(newChunkX + x, newChunkZ + z),
+                            new MutableObject<>(), false, true
+                        );
                     }
-
-                    for (int curZ = newChunkZ - d - 1; curZ <= newChunkZ + d + 1; ++curZ) {
-                        ChunkPos posLeft = new ChunkPos(newChunkX, curZ);
-                        ChunkPos posRight = new ChunkPos(newChunkX + d + 1, curZ);
-                        this.sendWatchPackets(player, posLeft, new MutableObject<>(), false, true);
-                        this.sendWatchPackets(player, posRight, new MutableObject<>(), false, true);
+                    if ((x == z) || ((x < 0) && (x == -z)) || ((x > 0) && (x == 1-z))) {
+                        t = dx;
+                        dx = -dz;
+                        dz = t;
                     }
+                    x += dx;
+                    z += dz;
                 }
             }
         } finally {

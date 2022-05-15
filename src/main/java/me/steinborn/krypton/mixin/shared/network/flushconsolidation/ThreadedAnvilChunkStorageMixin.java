@@ -11,8 +11,6 @@ import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -31,8 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(ThreadedAnvilChunkStorage.class)
 public abstract class ThreadedAnvilChunkStorageMixin {
-    private static final Logger LOGGER = LogManager.getLogger(ThreadedAnvilChunkStorageMixin.class);
-    
     @Shadow
     @Final
     private Int2ObjectMap<ThreadedAnvilChunkStorage.EntityTracker> entityTrackers;
@@ -159,10 +155,9 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     }
     
     /**
-     * 
-     * @param player The player
-     * @param pos The position of the chunk to send
-     * @param mutableObject A new mutable object
+     * @param player                The player
+     * @param pos                   The position of the chunk to send
+     * @param mutableObject         A new mutable object
      * @param oldWithinViewDistance If the chunk was previously within the player's view distance
      * @param newWithinViewDistance If the chunk is now within the player's view distance
      */
@@ -190,8 +185,6 @@ public abstract class ThreadedAnvilChunkStorageMixin {
         int maxI = t * t * 2;
         for (int i = 0; i < maxI; i++) {
             if ((-this.watchDistance <= x) && (x <= this.watchDistance) && (-this.watchDistance <= z) && (z <= this.watchDistance)) {
-                LOGGER.info("Sending chunk at pos [{}, {}]", chunkPosX + x, chunkPosZ + z);
-                
                 this.sendWatchPackets(player,
                                       new ChunkPos(chunkPosX + x, chunkPosZ + z),
                                       new MutableObject<>(), false, true);

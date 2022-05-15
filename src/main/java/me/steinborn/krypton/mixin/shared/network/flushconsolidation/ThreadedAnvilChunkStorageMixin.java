@@ -158,9 +158,17 @@ public abstract class ThreadedAnvilChunkStorageMixin {
         }
     }
     
+    /**
+     * 
+     * @param player The player
+     * @param pos The position of the chunk to send
+     * @param mutableObject A new mutable object
+     * @param oldWithinViewDistance If the chunk was previously within the player's view distance
+     * @param newWithinViewDistance If the chunk is now within the player's view distance
+     */
     @Shadow
     public abstract void sendWatchPackets(ServerPlayerEntity player, ChunkPos pos, MutableObject<ChunkDataS2CPacket> mutableObject,
-                                          boolean withinMaxWatchDistance, boolean withinViewDistance);
+                                          boolean oldWithinViewDistance, boolean newWithinViewDistance);
     
     @Shadow
     protected abstract boolean doesNotGenerateChunks(ServerPlayerEntity player);
@@ -234,7 +242,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                     for (int curZ = oldChunkZ - watchDistance - 1; curZ <= oldChunkZ + watchDistance + 1; ++curZ) {
                         ChunkPos chunkPos = new ChunkPos(curX, curZ);
                         
-                        this.sendWatchPackets(player, chunkPos, new MutableObject<>(), false, true);
+                        this.sendWatchPackets(player, chunkPos, new MutableObject<>(), true, false);
                     }
                 }
                 

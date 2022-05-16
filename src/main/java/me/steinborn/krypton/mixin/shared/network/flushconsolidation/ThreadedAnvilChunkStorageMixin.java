@@ -32,28 +32,28 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     @Shadow
     @Final
     private Int2ObjectMap<ThreadedAnvilChunkStorage.EntityTracker> entityTrackers;
-    
+
     @Shadow
     @Final
     private PlayerChunkWatchingManager playerChunkWatchingManager;
-    
+
     @Shadow
     @Final
     private ServerWorld world;
-    
+
     @Shadow
     @Final
     private ThreadedAnvilChunkStorage.TicketManager ticketManager;
-    
+
     @Shadow
     private int watchDistance;
-    
+
     @Shadow
     public static boolean isWithinDistance(int x1, int y1, int x2, int y2, int maxDistance) {
         // PAIL: isWithinEuclideanDistance(x1, y1, x2, y2, maxDistance)
         throw new AssertionError("pedantic");
     }
-    
+
     /**
      * This is run on login. This method is overwritten to avoid sending duplicate chunks (which mc does by default)
      *
@@ -63,10 +63,10 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     public void handlePlayerAddedOrRemoved(ServerPlayerEntity player, boolean added) {
         boolean isWatchingWorld = this.playerChunkWatchingManager.isWatchInactive(player);
         boolean doesChunkGen = !this.doesNotGenerateChunks(player);
-        
+
         int chunkPosX = ChunkSectionPos.getSectionCoord(player.getBlockX());
         int chunkPosZ = ChunkSectionPos.getSectionCoord(player.getBlockZ());
-        
+
         if (added) {
             this.playerChunkWatchingManager.add(ChunkPos.toLong(chunkPosX, chunkPosZ), player, isWatchingWorld);
             this.updateWatchedSection(player);
@@ -76,16 +76,16 @@ public abstract class ThreadedAnvilChunkStorageMixin {
         } else {
             ChunkSectionPos chunkSectionPos = player.getWatchedSection();
             this.playerChunkWatchingManager.remove(chunkSectionPos.toChunkPos().toLong(), player);
-            
+
             if (doesChunkGen) {
                 this.ticketManager.handleChunkLeave(chunkSectionPos, player);
             }
         }
-        
+
         // Send chunk watch packets even if the player has been removed, as this also send chunk unload packets
         sendSpiralChunkWatchPackets(player);
     }
-    
+
     /**
      * @author Andrew Steinborn
      * @reason Add support for flush consolidation
@@ -101,59 +101,58 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                 entityTracker.updateTrackedStatus(player);
             }
         }
-        
+
         ChunkSectionPos oldPos = player.getWatchedSection();
         ChunkSectionPos newPos = ChunkSectionPos.from(player);
         boolean isWatchingWorld = this.playerChunkWatchingManager.isWatchDisabled(player);
         boolean noChunkGen = this.doesNotGenerateChunks(player);
         boolean movedSections = !oldPos.equals(newPos);
-        
-        
+
         if (movedSections || isWatchingWorld != noChunkGen) {
             this.updateWatchedSection(player);
-            
+
             if (!isWatchingWorld) {
                 this.ticketManager.handleChunkLeave(oldPos, player);
             }
-            
+
             if (!noChunkGen) {
                 this.ticketManager.handleChunkEnter(newPos, player);
             }
-            
+
             if (!isWatchingWorld && noChunkGen) {
                 this.playerChunkWatchingManager.disableWatch(player);
             }
-            
+
             if (isWatchingWorld && !noChunkGen) {
                 this.playerChunkWatchingManager.enableWatch(player);
             }
-            
+
             long oldChunkPos = ChunkPos.toLong(oldPos.getX(), oldPos.getZ());
             long newChunkPos = ChunkPos.toLong(newPos.getX(), newPos.getZ());
             this.playerChunkWatchingManager.movePlayer(oldChunkPos, newChunkPos, player);
         }
-        
+
         // The player *always* needs to be send chunks, as for some reason both chunk loading & unloading packets are handled
         // by the same method (why mojang)
         if (player.world == this.world) {
             this.sendChunkWatchPackets(oldPos, player);
         }
     }
-    
+
     @Inject(method = "tickEntityMovement", at = @At("HEAD"))
     public void disableAutoFlushForEntityTracking(CallbackInfo info) {
         for (ServerPlayerEntity player : world.getPlayers()) {
             AutoFlushUtil.setAutoFlush(player, false);
         }
     }
-    
+
     @Inject(method = "tickEntityMovement", at = @At("RETURN"))
     public void enableAutoFlushForEntityTracking(CallbackInfo info) {
         for (ServerPlayerEntity player : world.getPlayers()) {
             AutoFlushUtil.setAutoFlush(player, true);
         }
     }
-    
+
     /**
      * @param player                The player
      * @param pos                   The position of the chunk to send
@@ -164,22 +163,20 @@ public abstract class ThreadedAnvilChunkStorageMixin {
     @Shadow
     public abstract void sendWatchPackets(ServerPlayerEntity player, ChunkPos pos, MutableObject<ChunkDataS2CPacket> mutableObject,
                                           boolean oldWithinViewDistance, boolean newWithinViewDistance);
-    
+
     @Shadow
     protected abstract boolean doesNotGenerateChunks(ServerPlayerEntity player);
-    
+
     @Shadow
     protected abstract ChunkSectionPos updateWatchedSection(ServerPlayerEntity serverPlayerEntity);
-    
+
     /**
      * Sends watch packets to the client in a spiral for a player which has *no* chunks loaded in the area.
-     *
-     * @author solonovamax
      */
     private void sendSpiralChunkWatchPackets(ServerPlayerEntity player) {
         int chunkPosX = ChunkSectionPos.getSectionCoord(player.getBlockX());
         int chunkPosZ = ChunkSectionPos.getSectionCoord(player.getBlockZ());
-        
+
         int x = 0, z = 0, dx = 0, dz = -1;
         int t = this.watchDistance * 2;
         int maxI = t * t * 2;
@@ -198,24 +195,24 @@ public abstract class ThreadedAnvilChunkStorageMixin {
             z += dz;
         }
     }
-    
+
     private void sendChunkWatchPackets(ChunkSectionPos oldPos, ServerPlayerEntity player) {
         AutoFlushUtil.setAutoFlush(player, false);
-        
+
         try {
             int oldChunkX = oldPos.getSectionX();
             int oldChunkZ = oldPos.getSectionZ();
-            
+
             int newChunkX = ChunkSectionPos.getSectionCoord(player.getBlockX());
             int newChunkZ = ChunkSectionPos.getSectionCoord(player.getBlockZ());
-            
+
             // TODO: Track chunks the server has sent the player
             if (Math.abs(oldChunkX - newChunkX) <= this.watchDistance * 2 && Math.abs(oldChunkZ - newChunkZ) <= this.watchDistance * 2) {
                 int minSendChunkX = Math.min(newChunkX, oldChunkX) - this.watchDistance - 1;
                 int minSendChunkZ = Math.min(newChunkZ, oldChunkZ) - this.watchDistance - 1;
                 int maxSendChunkX = Math.max(newChunkX, oldChunkX) + this.watchDistance + 1;
                 int maxSendChunkZ = Math.max(newChunkZ, oldChunkZ) + this.watchDistance + 1;
-                
+
                 // We're sending *all* chunks in the range of where the player was, to where the player currently is.
                 // This is because the #sendWatchPackets method will also unload chunks.
                 // For chunks outside of the view distance, it does nothing.
@@ -228,24 +225,23 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                     }
                 }
             } else { // If the player is not near the old chunks, send all new chunks & unload old chunks
-                
+
                 // Unload previous chunks
                 // Chunk unload packets are very light, so we can just do it like this
                 for (int curX = oldChunkX - watchDistance - 1; curX <= oldChunkX + watchDistance + 1; ++curX) {
                     for (int curZ = oldChunkZ - watchDistance - 1; curZ <= oldChunkZ + watchDistance + 1; ++curZ) {
                         ChunkPos chunkPos = new ChunkPos(curX, curZ);
-                        
+
                         this.sendWatchPackets(player, chunkPos, new MutableObject<>(), true, false);
                     }
                 }
-                
+
                 // Send new chunks
                 sendSpiralChunkWatchPackets(player);
-                
+
             }
         } finally {
             AutoFlushUtil.setAutoFlush(player, true);
         }
     }
-    
 }

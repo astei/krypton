@@ -181,7 +181,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
         int t = this.watchDistance * 2;
         int maxI = t * t * 2;
         for (int i = 0; i < maxI; i++) {
-            if ((-this.watchDistance <= x) && (x <= this.watchDistance) && (-this.watchDistance <= z) && (z <= this.watchDistance)) {
+            if ((-this.watchDistance - 1 <= x) && (x <= this.watchDistance + 1) && (-this.watchDistance - 1 <= z) && (z <= this.watchDistance + 1)) {
                 this.sendWatchPackets(player,
                                       new ChunkPos(chunkPosX + x, chunkPosZ + z),
                                       new MutableObject<>(), false, true);

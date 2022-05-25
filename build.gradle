@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.11-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -69,6 +69,26 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+        }
+    }
+}
+
+tasks.getByName("configureClientLaunch") {
+    doFirst {
+        loom {
+            runs {
+                all {
+                    property("fabric.development=true")
+                    property("mixin.hotSwap")
+                    // vmArg("-javaagent:${dependencies.module(group = "net.fabricmc", name = "sponge-mixin")}")
+                    def mixinJarFile = configurations.compileClasspath.files {
+                        it.group == "net.fabricmc" && it.name == "sponge-mixin"
+                    }.find { true }
+                    vmArg("-javaagent:$mixinJarFile")
+
+                    ideConfigGenerated = true
+                }
+            }
         }
     }
 }

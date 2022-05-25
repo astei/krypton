@@ -18,26 +18,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ServerPlayerEntityMixin implements KryptonServerPlayerEntity {
     @Unique
     private int playerViewDistance = -1;
-    
+
     @Unique
     private boolean updatedViewDistance = false;
-    
+
     @Inject(method = "setClientSettings", at = @At("HEAD"))
     public void setClientSettings(ClientSettingsC2SPacket packet, CallbackInfo ci) {
         updatedViewDistance = (playerViewDistance != packet.viewDistance());
         playerViewDistance = packet.viewDistance();
     }
-    
+
     @Override
     public boolean isUpdatedViewDistance() {
         return updatedViewDistance;
     }
-    
+
     @Override
     public void setUpdatedViewDistance(boolean updatedViewDistance) {
         this.updatedViewDistance = updatedViewDistance;
     }
-    
+
     @Override
     public int getPlayerViewDistance() {
         return playerViewDistance;

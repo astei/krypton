@@ -74,7 +74,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
             if (added) {
                 this.playerChunkWatchingManager.add(ChunkPos.toLong(chunkPosX, chunkPosZ), player, isWatchingWorld);
                 this.updateWatchedSection(player);
-                if (!isWatchingWorld) {
+                if (doesChunkGen) {
                     this.ticketManager.handleChunkEnter(ChunkSectionPos.from(player), player);
                 }
 
@@ -84,7 +84,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                 ChunkSectionPos chunkSectionPos = player.getWatchedSection();
                 this.playerChunkWatchingManager.remove(chunkSectionPos.toChunkPos().toLong(), player);
 
-                if (doesChunkGen) {
+                if (!isWatchingWorld) {
                     this.ticketManager.handleChunkLeave(chunkSectionPos, player);
                 }
 

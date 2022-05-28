@@ -20,22 +20,22 @@ public class ServerPlayerEntityMixin implements KryptonServerPlayerEntity {
     private int playerViewDistance = -1;
 
     @Unique
-    private boolean updatedViewDistance = false;
+    private boolean needsChunksReloaded = false;
 
     @Inject(method = "setClientSettings", at = @At("HEAD"))
     public void setClientSettings(ClientSettingsC2SPacket packet, CallbackInfo ci) {
-        updatedViewDistance = (playerViewDistance != packet.viewDistance());
+        needsChunksReloaded = (playerViewDistance != packet.viewDistance());
         playerViewDistance = packet.viewDistance();
     }
 
     @Override
-    public boolean isUpdatedViewDistance() {
-        return updatedViewDistance;
+    public boolean getNeedsChunksReloaded() {
+        return needsChunksReloaded;
     }
 
     @Override
-    public void setUpdatedViewDistance(boolean updatedViewDistance) {
-        this.updatedViewDistance = updatedViewDistance;
+    public void setNeedsChunksReloaded(boolean needsChunksReloaded) {
+        this.needsChunksReloaded = needsChunksReloaded;
     }
 
     @Override

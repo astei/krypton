@@ -63,8 +63,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
      */
     @Overwrite
     public void handlePlayerAddedOrRemoved(ServerPlayerEntity player, boolean added) {
-        boolean isWatchingWorld = this.playerChunkWatchingManager.isWatchInactive(player);
-        boolean doesChunkGen = !this.doesNotGenerateChunks(player);
+        boolean doesNotGenerateChunks = this.doesNotGenerateChunks(player);
+        boolean isWatchingWorld = !this.playerChunkWatchingManager.isWatchInactive(player);
 
         int chunkPosX = ChunkSectionPos.getSectionCoord(player.getBlockX());
         int chunkPosZ = ChunkSectionPos.getSectionCoord(player.getBlockZ());
@@ -72,9 +72,10 @@ public abstract class ThreadedAnvilChunkStorageMixin {
         AutoFlushUtil.setAutoFlush(player, false);
         try {
             if (added) {
-                this.playerChunkWatchingManager.add(ChunkPos.toLong(chunkPosX, chunkPosZ), player, isWatchingWorld);
+                this.playerChunkWatchingManager.add(ChunkPos.toLong(chunkPosX, chunkPosZ), player, doesNotGenerateChunks);
                 this.updateWatchedSection(player);
-                if (doesChunkGen) {
+
+                if (!doesNotGenerateChunks) {
                     this.ticketManager.handleChunkEnter(ChunkSectionPos.from(player), player);
                 }
 
@@ -84,7 +85,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                 ChunkSectionPos chunkSectionPos = player.getWatchedSection();
                 this.playerChunkWatchingManager.remove(chunkSectionPos.toChunkPos().toLong(), player);
 
-                if (!isWatchingWorld) {
+                if (isWatchingWorld) {
                     this.ticketManager.handleChunkLeave(chunkSectionPos, player);
                 }
 
@@ -190,10 +191,10 @@ public abstract class ThreadedAnvilChunkStorageMixin {
 
             int playerViewDistance = getPlayerViewDistance(player); // +1 for buffer
 
-            if (reloadAllChunks(player)) { // Player updated view distance, unload chunks & resend (only unload chunks not visible)
+            if (shouldReloadAllChunks(player)) { // Player updated view distance, unload chunks & resend (only unload chunks not visible)
                 //noinspection InstanceofIncompatibleInterface
                 if (player instanceof KryptonServerPlayerEntity kryptonPlayer)
-                    kryptonPlayer.setUpdatedViewDistance(true);
+                    kryptonPlayer.setNeedsChunksReloaded(false);
 
                 for (int curX = newChunkX - watchDistance - 1; curX <= newChunkX + watchDistance + 1; ++curX) {
                     for (int curZ = newChunkZ - watchDistance - 1; curZ <= newChunkZ + watchDistance + 1; ++curZ) {
@@ -293,8 +294,8 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                  : this.watchDistance : this.watchDistance;
     }
 
-    private boolean reloadAllChunks(ServerPlayerEntity playerEntity) {
+    private boolean shouldReloadAllChunks(ServerPlayerEntity playerEntity) {
         //noinspection InstanceofIncompatibleInterface
-        return playerEntity instanceof KryptonServerPlayerEntity kryptonPlayerEntity && kryptonPlayerEntity.isUpdatedViewDistance();
+        return playerEntity instanceof KryptonServerPlayerEntity kryptonPlayerEntity && kryptonPlayerEntity.getNeedsChunksReloaded();
     }
 }

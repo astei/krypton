@@ -2,9 +2,9 @@ package me.steinborn.krypton.mod.shared.player;
 
 
 public interface KryptonServerPlayerEntity {
-    void setUpdatedViewDistance(boolean updatedViewDistance);
+    void setNeedsChunksReloaded(boolean needsChunksReloaded);
 
     int getPlayerViewDistance();
 
-    boolean isUpdatedViewDistance();
+    boolean getNeedsChunksReloaded();
 }

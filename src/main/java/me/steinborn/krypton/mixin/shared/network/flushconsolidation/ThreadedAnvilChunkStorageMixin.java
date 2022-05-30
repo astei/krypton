@@ -1,6 +1,5 @@
 package me.steinborn.krypton.mixin.shared.network.flushconsolidation;
 
-
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import me.steinborn.krypton.mod.shared.network.util.AutoFlushUtil;
 import me.steinborn.krypton.mod.shared.player.KryptonServerPlayerEntity;
@@ -20,10 +19,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-
 /**
  * Mixes into various methods in {@code ThreadedAnvilChunkStorage} to utilize flush consolidation for sending chunks all at once to the
- * client. Helpful for heavy server activity or flying very quickly.
+ * client, along with loading chunks in a spiral order. Helpful for heavy server activity or flying very quickly.
  * <p>
  * Note for anyone attempting to modify this class in the future: for some reason, mojang includes both the chunk loading & chunk unloading
  * packets in the <i>same</i> method. This is why chunks must <i>always</i> be sent to the player when they leave an area.
@@ -259,8 +257,9 @@ public abstract class ThreadedAnvilChunkStorageMixin {
                 boolean inNew = isWithinDistance(chunkPosX, chunkPosZ, chunkPosX + x, chunkPosZ + z, playerViewDistance);
 
                 this.sendWatchPackets(player,
-                                      new ChunkPos(chunkPosX + x, chunkPosZ + z),
-                                      new MutableObject<>(), false, inNew);
+                        new ChunkPos(chunkPosX + x, chunkPosZ + z),
+                        new MutableObject<>(), false, inNew
+                );
             }
             if ((x == z) || ((x < 0) && (x == -z)) || ((x > 0) && (x == 1 - z))) {
                 t = dx;

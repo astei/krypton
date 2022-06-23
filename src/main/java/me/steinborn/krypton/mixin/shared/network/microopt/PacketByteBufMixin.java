@@ -39,9 +39,12 @@ public abstract class PacketByteBufMixin extends ByteBuf {
      */
     @Overwrite
     public PacketByteBuf writeString(String string, int i) {
+        if (string.length() > i) {
+            throw new EncoderException("String too big (was " + string.length() + " characters, max " + i + ")");
+        }
         int utf8Bytes = ByteBufUtil.utf8Bytes(string);
-        if (utf8Bytes > i) {
-            throw new EncoderException("String too big (was " + utf8Bytes + " bytes encoded, max " + i + ")");
+        if (utf8Bytes > i * 3) {
+            throw new EncoderException("String too big (was " + utf8Bytes + " bytes encoded, max " + (i * 3) + ")");
         } else {
             this.writeVarInt(utf8Bytes);
             this.writeCharSequence(string, StandardCharsets.UTF_8);

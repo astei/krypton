@@ -1,8 +1,6 @@
 package me.steinborn.krypton.mixin.shared.network.flushconsolidation;
 
 import io.netty.channel.*;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import me.steinborn.krypton.mod.shared.network.ConfigurableAutoFlush;
 import net.minecraft.class_7648;
 import net.minecraft.network.ClientConnection;

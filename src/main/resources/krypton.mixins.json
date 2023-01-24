@@ -24,6 +24,7 @@
         "shared.network.pipeline.compression.ClientConnectionMixin",
         "shared.network.pipeline.encryption.ClientConnectionMixin",
         "shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin",
+        "shared.network.util.ServerPlayNetworkHandlerAccessor",
         "shared.player.ServerPlayerEntityMixin"
     ],
     "injectors":          {

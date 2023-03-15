@@ -1,5 +1,6 @@
 package me.steinborn.krypton.mod.shared.network.util;
 
+import me.steinborn.krypton.mixin.shared.network.util.ServerPlayNetworkHandlerAccessor;
 import me.steinborn.krypton.mod.shared.network.ConfigurableAutoFlush;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -7,7 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 public class AutoFlushUtil {
     public static void setAutoFlush(ServerPlayerEntity player, boolean val) {
         if (player.getClass() == ServerPlayerEntity.class) {
-            ConfigurableAutoFlush configurableAutoFlusher = ((ConfigurableAutoFlush) player.networkHandler.getConnection());
+            ConfigurableAutoFlush configurableAutoFlusher = ((ConfigurableAutoFlush) ((ServerPlayNetworkHandlerAccessor) player.networkHandler).getConnection());
             configurableAutoFlusher.setShouldAutoFlush(val);
         }
     }

@@ -2,10 +2,10 @@ package me.steinborn.krypton.mixin.shared.network.flushconsolidation;
 
 import io.netty.channel.*;
 import me.steinborn.krypton.mod.shared.network.ConfigurableAutoFlush;
-import net.minecraft.class_7648;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
-import net.minecraft.network.Packet;
+import net.minecraft.network.PacketCallbacks;
+import net.minecraft.network.packet.Packet;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,8 +43,7 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
             cancellable = true,
             method = "sendImmediately",
             at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I", opcode = Opcodes.PUTFIELD, shift = At.Shift.AFTER))
-    private void sendImmediately$rewrite(Packet<?> packet, @Nullable class_7648 callback, CallbackInfo info, NetworkState packetState, NetworkState protocolState) {
-        // class_7648 is net/minecraft/network/PacketSendListener in Mojmap
+    private void sendImmediately$rewrite(Packet<?> packet, @Nullable PacketCallbacks callback, CallbackInfo info, NetworkState packetState, NetworkState protocolState) {
         boolean newState = packetState != protocolState;
 
         if (this.channel.eventLoop().inEventLoop()) {
@@ -88,16 +87,16 @@ public abstract class ClientConnectionMixin implements ConfigurableAutoFlush {
         return null;
     }
 
-    private void doSendPacket(Packet<?> packet, class_7648 callback) {
+    private void doSendPacket(Packet<?> packet, PacketCallbacks callback) {
         if (callback == null) {
             this.channel.write(packet, this.channel.voidPromise());
         } else {
             ChannelFuture channelFuture = this.channel.write(packet);
             channelFuture.addListener(listener -> {
               if (listener.isSuccess()) {
-                callback.method_45083(); // onSuccess moj
+                callback.onSuccess();
               } else {
-                Packet<?> failedPacket = callback.method_45086(); // onFailure moj
+                Packet<?> failedPacket = callback.getFailurePacket();
                 if (failedPacket != null) {
                   ChannelFuture failedChannelFuture = this.channel.writeAndFlush(failedPacket);
                   failedChannelFuture.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);

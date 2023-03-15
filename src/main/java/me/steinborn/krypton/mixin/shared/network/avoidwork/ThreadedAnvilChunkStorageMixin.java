@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import me.steinborn.krypton.mod.shared.WorldEntityByChunkAccess;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityAttachS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityPassengersSetS2CPacket;

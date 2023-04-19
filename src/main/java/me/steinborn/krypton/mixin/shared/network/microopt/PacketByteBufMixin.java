@@ -59,7 +59,7 @@ public abstract class PacketByteBufMixin extends ByteBuf {
     @Overwrite
     public PacketByteBuf writeVarInt(int value) {
         // Peel the one and two byte count cases explicitly as they are the most common VarInt sizes
-        // that the proxy will write, to improve inlining.
+        // that the server will send, to improve inlining.
         if ((value & (0xFFFFFFFF << 7)) == 0) {
             parent.writeByte(value);
         } else if ((value & (0xFFFFFFFF << 14)) == 0) {

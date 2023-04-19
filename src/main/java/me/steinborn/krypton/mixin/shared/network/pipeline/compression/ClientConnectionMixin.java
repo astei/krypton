@@ -6,8 +6,6 @@ import io.netty.channel.Channel;
 import me.steinborn.krypton.mod.shared.network.compression.MinecraftCompressDecoder;
 import me.steinborn.krypton.mod.shared.network.compression.MinecraftCompressEncoder;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketDeflater;
-import net.minecraft.network.PacketInflater;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,10 +38,10 @@ public class ClientConnectionMixin {
     @Inject(method = "setCompressionThreshold", at = @At("HEAD"), cancellable = true)
     public void setCompressionThreshold(int compressionThreshold, boolean validate, CallbackInfo ci) {
         if (compressionThreshold < 0) {
-            if (this.channel.pipeline().get("decompress") instanceof PacketInflater) {
+            if (this.channel.pipeline().get("decompress") != null) {
                 this.channel.pipeline().remove("decompress");
             }
-            if (this.channel.pipeline().get("compress") instanceof PacketDeflater) {
+            if (this.channel.pipeline().get("compress") != null) {
                 this.channel.pipeline().remove("compress");
             }
         } else {

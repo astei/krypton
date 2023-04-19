@@ -3,6 +3,7 @@ package me.steinborn.krypton.mixin.shared.network.pipeline.encryption;
 import com.velocitypowered.natives.encryption.VelocityCipher;
 import com.velocitypowered.natives.util.Natives;
 import io.netty.channel.Channel;
+import me.steinborn.krypton.mod.shared.misc.KryptonPipelineEvent;
 import me.steinborn.krypton.mod.shared.network.ClientConnectionEncryptionExtension;
 import me.steinborn.krypton.mod.shared.network.pipeline.MinecraftCipherDecoder;
 import me.steinborn.krypton.mod.shared.network.pipeline.MinecraftCipherEncoder;
@@ -27,6 +28,8 @@ public class ClientConnectionMixin implements ClientConnectionEncryptionExtensio
             this.encrypted = true;
             this.channel.pipeline().addBefore("splitter", "decrypt", new MinecraftCipherDecoder(decryption));
             this.channel.pipeline().addBefore("prepender", "encrypt", new MinecraftCipherEncoder(encryption));
+
+            this.channel.pipeline().fireUserEventTriggered(KryptonPipelineEvent.ENCRYPTION_ENABLED);
         }
     }
 }

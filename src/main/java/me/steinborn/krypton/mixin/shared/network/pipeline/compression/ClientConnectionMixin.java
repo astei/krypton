@@ -37,9 +37,13 @@ public class ClientConnectionMixin {
 
     @Inject(method = "setCompressionThreshold", at = @At("HEAD"), cancellable = true)
     public void setCompressionThreshold(int compressionThreshold, boolean validate, CallbackInfo ci) {
-        if (compressionThreshold == -1) {
-            this.channel.pipeline().remove("decompress");
-            this.channel.pipeline().remove("compress");
+        if (compressionThreshold < 0) {
+            if (this.channel.pipeline().get("decompress") instanceof PacketInflater) {
+                this.channel.pipeline().remove("decompress");
+            }
+            if (this.channel.pipeline().get("compress") instanceof PacketDeflater) {
+                this.channel.pipeline().remove("compress");
+            }
         } else {
             MinecraftCompressDecoder decoder = (MinecraftCompressDecoder) channel.pipeline()
                     .get("decompress");

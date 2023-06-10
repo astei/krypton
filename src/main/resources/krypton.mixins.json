@@ -15,7 +15,6 @@
         "shared.fastchunkentityaccess.SectionedEntityCacheMixin",
         "shared.network.avoidwork.ThreadedAnvilChunkStorageMixin",
         "shared.network.flushconsolidation.ClientConnectionMixin",
-        "shared.network.flushconsolidation.EntityTrackerEntryMixin",
         "shared.network.flushconsolidation.ThreadedAnvilChunkStorageMixin",
         "shared.network.microopt.EntityTrackerEntryMixin",
         "shared.network.microopt.PacketByteBufMixin",

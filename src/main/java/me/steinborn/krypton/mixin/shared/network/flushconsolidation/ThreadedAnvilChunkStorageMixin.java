@@ -143,7 +143,7 @@ public abstract class ThreadedAnvilChunkStorageMixin {
 
         // The player *always* needs to be send chunks, as for some reason both chunk loading & unloading packets are handled
         // by the same method (why mojang)
-        if (player.world == this.world)
+        if (player.getWorld() == this.world)
             this.sendChunkWatchPackets(oldPos, player);
     }
 

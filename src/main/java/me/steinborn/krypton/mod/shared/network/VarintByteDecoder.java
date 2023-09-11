@@ -3,6 +3,10 @@ package me.steinborn.krypton.mod.shared.network;
 import io.netty.util.ByteProcessor;
 
 public class VarintByteDecoder implements ByteProcessor {
+
+    private static final int MAXIMUM_VARINT_BYTE_SIZE = Boolean.getBoolean("krypton.permit-oversized-packets")
+            ? 5 : 3;
+
     private int readVarint;
     private int bytesRead;
     private DecodeResult result = DecodeResult.TOO_SHORT;
@@ -18,7 +22,7 @@ public class VarintByteDecoder implements ByteProcessor {
             return false;
         }
         readVarint |= (k & 0x7F) << bytesRead++ * 7;
-        if (bytesRead > 3) {
+        if (bytesRead > MAXIMUM_VARINT_BYTE_SIZE) {
             result = DecodeResult.TOO_BIG;
             return false;
         }

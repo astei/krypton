@@ -12,7 +12,8 @@ import java.util.List;
 
 public class MinecraftCompressDecoder extends ByteToMessageDecoder {
 
-  private static final int UNCOMPRESSED_CAP = 8 * 1024 * 1024; // 8MiB
+  private static final int UNCOMPRESSED_CAP = Boolean.getBoolean("krypton.permit-oversized-packets")
+          ? Integer.MAX_VALUE : 8 * 1024 * 1024;
 
   private int threshold;
   private final boolean validate;

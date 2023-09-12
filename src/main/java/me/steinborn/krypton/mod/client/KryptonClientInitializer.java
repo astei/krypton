@@ -1,6 +1,5 @@
 package me.steinborn.krypton.mod.client;
 
-import me.steinborn.krypton.mod.server.KryptonServerInitializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -9,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 @Environment(EnvType.CLIENT)
 public class KryptonClientInitializer implements ClientModInitializer {
-    private static final Logger LOGGER = LogManager.getLogger(KryptonServerInitializer.class);
+    private static final Logger LOGGER = LogManager.getLogger(KryptonClientInitializer.class);
 
     @Override
     public void onInitializeClient() {

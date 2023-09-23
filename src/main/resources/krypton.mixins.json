@@ -1,32 +1,23 @@
 {
-    "required":           true,
-    "minVersion":         "0.8",
-    "package":            "me.steinborn.krypton.mixin",
+    "required": true,
+    "minVersion": "0.8",
+    "package": "me.steinborn.krypton.mixin",
     "compatibilityLevel": "JAVA_16",
-    "plugin":             "me.steinborn.krypton.mod.shared.KryptonMixinPlugin",
-    "client":             [
-        "client.fastchunkentityaccess.ClientWorldMixin"
-    ],
-    "mixins":             [
-        "server.fastchunkentityaccess.ServerWorldMixin",
-        "shared.bugfix.CustomPayloadS2CPacketFixMemoryLeakMixin",
+    "plugin": "me.steinborn.krypton.mod.shared.KryptonMixinPlugin",
+    "client": [],
+    "mixins": [
         "shared.debugaid.ResourceLeakDetectorDisableConditionalMixin",
-        "shared.fastchunkentityaccess.EntityTrackingSectionAccessor",
-        "shared.fastchunkentityaccess.SectionedEntityCacheMixin",
-        "shared.network.avoidwork.ThreadedAnvilChunkStorageMixin",
-        "shared.network.flushconsolidation.ClientConnectionMixin",
-        "shared.network.flushconsolidation.ThreadedAnvilChunkStorageMixin",
         "shared.network.microopt.EntityTrackerEntryMixin",
-        "shared.network.microopt.PacketByteBufMixin",
+        "shared.network.microopt.StringEncodingMixin",
+        "shared.network.microopt.VarIntsMixin",
         "shared.network.pipeline.LegacyQueryHandlerMixin",
         "shared.network.pipeline.SplitterHandlerMixin",
         "shared.network.pipeline.compression.ClientConnectionMixin",
         "shared.network.pipeline.encryption.ClientConnectionMixin",
         "shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin",
-        "shared.network.util.ServerPlayNetworkHandlerAccessor",
-        "shared.player.ServerPlayerEntityMixin"
+        "shared.network.util.ServerCommonNetworkHandlerAccessor"
     ],
-    "injectors":          {
+    "injectors": {
         "defaultRequire": 1
     }
 }

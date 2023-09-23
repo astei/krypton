@@ -3,7 +3,7 @@ package me.steinborn.krypton.mixin.shared.network.pipeline;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import me.steinborn.krypton.mod.shared.network.VarintByteDecoder;
-import net.minecraft.network.SplitterHandler;
+import net.minecraft.network.handler.SplitterHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 

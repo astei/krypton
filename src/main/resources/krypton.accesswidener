@@ -2,10 +2,5 @@ accessWidener v1 named
 
 accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker
 accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$TicketManager
-accessible method net/minecraft/network/SplitterHandler decode (Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Ljava/util/List;)V
-accessible method net/minecraft/server/world/ThreadedAnvilChunkStorage sendWatchPackets (Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/util/math/ChunkPos;Lorg/apache/commons/lang3/mutable/MutableObject;ZZ)V
+accessible method net/minecraft/network/handler/SplitterHandler decode (Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Ljava/util/List;)V
 accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker entity Lnet/minecraft/entity/Entity;
-
-# TODO: Reduce abuse
-accessible field net/minecraft/client/world/ClientEntityManager cache Lnet/minecraft/world/entity/SectionedEntityCache;
-accessible field net/minecraft/server/world/ServerEntityManager cache Lnet/minecraft/world/entity/SectionedEntityCache;

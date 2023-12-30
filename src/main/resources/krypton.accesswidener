@@ -4,3 +4,4 @@ accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTrac
 accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$TicketManager
 accessible method net/minecraft/network/handler/SplitterHandler decode (Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Ljava/util/List;)V
 accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker entity Lnet/minecraft/entity/Entity;
+accessible method net/minecraft/network/packet/s2c/common/CustomPayloadS2CPacket readUnknownPayload (Lnet/minecraft/util/Identifier;Lnet/minecraft/network/PacketByteBuf;)Lnet/minecraft/network/packet/UnknownCustomPayload;

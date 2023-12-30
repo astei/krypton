@@ -6,6 +6,7 @@
     "plugin": "me.steinborn.krypton.mod.shared.KryptonMixinPlugin",
     "client": [],
     "mixins": [
+        "shared.bugfix.CustomPayloadS2CPacketFabricAPICompatMixin",
         "shared.debugaid.ResourceLeakDetectorDisableConditionalMixin",
         "shared.network.microopt.EntityTrackerEntryMixin",
         "shared.network.microopt.StringEncodingMixin",

@@ -20,9 +20,9 @@ public class KryptonMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.contains("avoidwork.ThreadedAnvilChunkStorageMixin")) {
-            // This mixin is incompatible with Immersive Portals.
-            return !FabricLoader.getInstance().isModLoaded("imm_ptl_core");
+        if (mixinClassName.contains("CustomPayloadS2CPacketFabricAPICompatMixin")) {
+            // This mixin should only apply when Fabric API is present.
+            return FabricLoader.getInstance().isModLoaded("fabric-api");
         }
         return true;
     }

@@ -12,7 +12,7 @@ public class CustomPayloadS2CPacketFabricAPICompatMixin {
 
     @ModifyVariable(method = "readPayload", index = 1, at = @At(value = "HEAD"), argsOnly = true)
     private static PacketByteBuf readPayload$explicitCopy(PacketByteBuf buf) {
-        PacketByteBuf copy = new PacketByteBuf(Unpooled.copiedBuffer(buf.copy()));
+        PacketByteBuf copy = new PacketByteBuf(Unpooled.copiedBuffer(buf));
         // Pretend to consume everything in the buffer
         buf.skipBytes(buf.readableBytes());
         return copy;

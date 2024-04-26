@@ -6,7 +6,6 @@
     "plugin": "me.steinborn.krypton.mod.shared.KryptonMixinPlugin",
     "client": [],
     "mixins": [
-        "shared.bugfix.CustomPayloadS2CPacketFabricAPICompatMixin",
         "shared.debugaid.ResourceLeakDetectorDisableConditionalMixin",
         "shared.network.microopt.EntityTrackerEntryMixin",
         "shared.network.microopt.StringEncodingMixin",
@@ -15,8 +14,7 @@
         "shared.network.pipeline.SplitterHandlerMixin",
         "shared.network.pipeline.compression.ClientConnectionMixin",
         "shared.network.pipeline.encryption.ClientConnectionMixin",
-        "shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin",
-        "shared.network.util.ServerCommonNetworkHandlerAccessor"
+        "shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin"
     ],
     "injectors": {
         "defaultRequire": 1

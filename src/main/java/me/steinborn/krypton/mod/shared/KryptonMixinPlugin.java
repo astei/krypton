@@ -20,10 +20,6 @@ public class KryptonMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.contains("CustomPayloadS2CPacketFabricAPICompatMixin")) {
-            // This mixin should only apply when Fabric API is present.
-            return FabricLoader.getInstance().isModLoaded("fabric-api");
-        }
         return true;
     }
 

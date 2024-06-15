@@ -1,4 +1,4 @@
 accessWidener v1 named
 
 accessible method net/minecraft/network/handler/SplitterHandler decode (Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Ljava/util/List;)V
-accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker entity Lnet/minecraft/entity/Entity;
+accessible field net/minecraft/server/world/ServerChunkLoadingManager$EntityTracker entity Lnet/minecraft/entity/Entity;

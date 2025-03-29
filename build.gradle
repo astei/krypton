@@ -5,9 +5,8 @@ plugins {
 
 repositories {
     maven {
-        url "https://papermc.io/repo/repository/maven-public/"
+        url "https://repo.papermc.io/repository/maven-public/"
     }
-    maven { name 'Jitpack'; url 'https://jitpack.io' }
 }
 
 sourceCompatibility = JavaVersion.VERSION_21
@@ -28,7 +27,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation include("com.velocitypowered:velocity-native:3.3.0-SNAPSHOT")
+    modImplementation include("com.velocitypowered:velocity-native:3.4.0-SNAPSHOT")
 }
 
 test {

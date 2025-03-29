@@ -39,7 +39,9 @@ public class MinecraftCompressDecoder extends MessageToMessageDecoder<ByteBuf> {
         PacketByteBuf bb = new PacketByteBuf(in);
         int claimedUncompressedSize = bb.readVarInt();
         if (claimedUncompressedSize == 0) {
-            // This message is not compressed.
+            int actualUncompressedSize = in.readableBytes();
+            checkState(actualUncompressedSize < threshold, "Actual uncompressed size %s is greater than"
+                    + " threshold %s", actualUncompressedSize, threshold);
             out.add(in.retain());
             return;
         }

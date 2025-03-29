@@ -14,7 +14,8 @@
         "shared.network.pipeline.SplitterHandlerMixin",
         "shared.network.pipeline.compression.ClientConnectionMixin",
         "shared.network.pipeline.encryption.ClientConnectionMixin",
-        "shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin"
+        "shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin",
+        "shared.network.pipeline.prepender.ClientConnectionMixin"
     ],
     "injectors": {
         "defaultRequire": 1

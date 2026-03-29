@@ -6,22 +6,22 @@ import io.netty.channel.Channel;
 import me.steinborn.krypton.mod.shared.misc.KryptonPipelineEvent;
 import me.steinborn.krypton.mod.shared.network.compression.MinecraftCompressDecoder;
 import me.steinborn.krypton.mod.shared.network.compression.MinecraftCompressEncoder;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.handler.PacketDeflater;
-import net.minecraft.network.handler.PacketInflater;
+import net.minecraft.network.CompressionDecoder;
+import net.minecraft.network.CompressionEncoder;
+import net.minecraft.network.Connection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClientConnection.class)
-public class ClientConnectionMixin {
+@Mixin(Connection.class)
+public class ConnectionMixin {
     @Shadow
     private Channel channel;
 
-    @Inject(method = "setCompressionThreshold", at = @At("HEAD"), cancellable = true)
-    public void setCompressionThreshold(int compressionThreshold, boolean validate, CallbackInfo ci) {
+    @Inject(method = "setupCompression", at = @At("HEAD"), cancellable = true)
+    public void setupCompression(int compressionThreshold, boolean validate, CallbackInfo ci) {
         if (compressionThreshold < 0) {
             if (isKryptonOrVanillaDecompressor(this.channel.pipeline().get("decompress"))) {
                 this.channel.pipeline().remove("decompress");
@@ -58,10 +58,10 @@ public class ClientConnectionMixin {
     }
 
     private static boolean isKryptonOrVanillaDecompressor(Object o) {
-        return o instanceof PacketInflater || o instanceof MinecraftCompressDecoder;
+        return o instanceof CompressionDecoder || o instanceof MinecraftCompressDecoder;
     }
 
     private static boolean isKryptonOrVanillaCompressor(Object o) {
-        return o instanceof PacketDeflater || o instanceof MinecraftCompressEncoder;
+        return o instanceof CompressionEncoder || o instanceof MinecraftCompressEncoder;
     }
 }

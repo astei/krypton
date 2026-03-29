@@ -24,6 +24,6 @@ public class KryptonSharedInitializer implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Compression will use " + Natives.compress.getLoadedVariant() + ", encryption will use " + Natives.cipher.getLoadedVariant());
+		LOGGER.info("Compression will use {}, encryption will use {}", Natives.compress.getLoadedVariant(), Natives.cipher.getLoadedVariant());
     }
 }

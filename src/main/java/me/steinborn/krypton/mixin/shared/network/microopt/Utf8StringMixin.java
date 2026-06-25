@@ -3,21 +3,21 @@ package me.steinborn.krypton.mixin.shared.network.microopt;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.EncoderException;
-import net.minecraft.network.encoding.StringEncoding;
-import net.minecraft.network.encoding.VarInts;
+import net.minecraft.network.Utf8String;
+import net.minecraft.network.VarInt;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
 import java.nio.charset.StandardCharsets;
 
-@Mixin(StringEncoding.class)
-public class StringEncodingMixin {
+@Mixin(Utf8String.class)
+public class Utf8StringMixin {
     /**
      * @author Andrew Steinborn
      * @reason optimized version
      */
     @Overwrite
-    public static void encode(ByteBuf buf, CharSequence string, int length) {
+    public static void write(ByteBuf buf, CharSequence string, int length) {
         // Mojang _almost_ gets it right, but stumbles at the finish line...
         if (string.length() > length) {
             throw new EncoderException("String too big (was " + string.length() + " characters, max " + length + ")");
@@ -27,7 +27,7 @@ public class StringEncodingMixin {
         if (utf8Bytes > maxBytesPermitted) {
             throw new EncoderException("String too big (was " + utf8Bytes + " bytes encoded, max " + maxBytesPermitted + ")");
         } else {
-            VarInts.write(buf, utf8Bytes);
+            VarInt.write(buf, utf8Bytes);
             buf.writeCharSequence(string, StandardCharsets.UTF_8);
         }
     }

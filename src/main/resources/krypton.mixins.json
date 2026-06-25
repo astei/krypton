@@ -7,15 +7,15 @@
     "client": [],
     "mixins": [
         "shared.debugaid.ResourceLeakDetectorDisableConditionalMixin",
-        "shared.network.microopt.EntityTrackerEntryMixin",
-        "shared.network.microopt.StringEncodingMixin",
-        "shared.network.microopt.VarIntsMixin",
+        "shared.network.microopt.ServerEntityMixin",
+        "shared.network.microopt.Utf8StringMixin",
+        "shared.network.microopt.VarIntMixin",
         "shared.network.pipeline.LegacyQueryHandlerMixin",
-        "shared.network.pipeline.SplitterHandlerMixin",
-        "shared.network.pipeline.compression.ClientConnectionMixin",
-        "shared.network.pipeline.encryption.ClientConnectionMixin",
-        "shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin",
-        "shared.network.pipeline.prepender.ClientConnectionMixin"
+        "shared.network.pipeline.Varint21FrameDecoderMixin",
+        "shared.network.pipeline.compression.ConnectionMixin",
+        "shared.network.pipeline.encryption.ConnectionMixin",
+        "shared.network.pipeline.encryption.ServerLoginPacketListenerImplMixin",
+        "shared.network.pipeline.prepender.ConnectionMixin"
     ],
     "injectors": {
         "defaultRequire": 1

@@ -3,7 +3,7 @@ package me.steinborn.krypton.mixin.shared.network.pipeline;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import me.steinborn.krypton.mod.shared.network.util.QuietDecoderException;
-import net.minecraft.network.handler.SplitterHandler;
+import net.minecraft.network.Varint21FrameDecoder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,8 +18,8 @@ import static me.steinborn.krypton.mod.shared.network.util.WellKnownExceptions.V
  * Overrides the SplitterHandler to use optimized packet splitting from Velocity 1.1.0. In addition this applies a
  * security fix to stop "nullping" attacks.
  */
-@Mixin(SplitterHandler.class)
-public class SplitterHandlerMixin {
+@Mixin(Varint21FrameDecoder.class)
+public class Varint21FrameDecoderMixin {
     /**
      * @author Andrew Steinborn
      * @reason Use optimized Velocity varint decoder that reduces bounds checking

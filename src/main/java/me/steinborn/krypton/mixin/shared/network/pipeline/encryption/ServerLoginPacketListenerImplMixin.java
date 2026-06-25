@@ -1,8 +1,8 @@
 package me.steinborn.krypton.mixin.shared.network.pipeline.encryption;
 
 import me.steinborn.krypton.mod.shared.network.ClientConnectionEncryptionExtension;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.network.Connection;
+import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,11 +14,11 @@ import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 
-@Mixin(ServerLoginNetworkHandler.class)
-public class ServerLoginNetworkHandlerMixin {
-    @Shadow @Final ClientConnection connection;
+@Mixin(ServerLoginPacketListenerImpl.class)
+public class ServerLoginPacketListenerImplMixin {
+    @Shadow @Final Connection connection;
 
-    @Redirect(method = "onKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/encryption/NetworkEncryptionUtils;cipherFromKey(ILjava/security/Key;)Ljavax/crypto/Cipher;"))
+    @Redirect(method = "handleKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Crypt;getCipher(ILjava/security/Key;)Ljavax/crypto/Cipher;"))
     private Cipher onKey$initializeVelocityCipher(int ignored1, Key secretKey) throws GeneralSecurityException {
         // Hijack this portion of the cipher initialization and set up our own encryption handler.
         ((ClientConnectionEncryptionExtension) this.connection).setupEncryption((SecretKey) secretKey);
@@ -27,8 +27,8 @@ public class ServerLoginNetworkHandlerMixin {
         return null;
     }
 
-    @Redirect(method = "onKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;setupEncryption(Ljavax/crypto/Cipher;Ljavax/crypto/Cipher;)V"))
-    public void onKey$ignoreMinecraftEncryptionPipelineInjection(ClientConnection connection, Cipher ignored1, Cipher ignored2) {
+    @Redirect(method = "handleKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;setEncryptionKey(Ljavax/crypto/Cipher;Ljavax/crypto/Cipher;)V"))
+    public void onKey$ignoreMinecraftEncryptionPipelineInjection(Connection connection, Cipher ignored1, Cipher ignored2) {
         // Turn the operation into a no-op.
     }
 }

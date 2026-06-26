@@ -24,7 +24,7 @@ public class KryptonMixinPlugin implements IMixinConfigPlugin {
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         // Disable ServerLoginNetworkHandlerMixin if e4mc is loaded, as it conflicts with e4mc's
         // encryption handling for Dialtone (P2P) connections
-        if (E4MC_LOADED && mixinClassName.equals("me.steinborn.krypton.mixin.shared.network.pipeline.encryption.ServerLoginNetworkHandlerMixin")) {
+        if (E4MC_LOADED && mixinClassName.equals("me.steinborn.krypton.mixin.shared.network.pipeline.encryption.ServerLoginPacketListenerImplMixin")) {
             return false;
         }
         return true;

@@ -2,33 +2,28 @@ package me.steinborn.krypton.mixin.shared.network.pipeline.encryption;
 
 import me.steinborn.krypton.mod.shared.network.ClientConnectionEncryptionExtension;
 import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.login.ServerboundKeyPacket;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
-import java.security.Key;
+import java.security.PrivateKey;
 
 @Mixin(ServerLoginPacketListenerImpl.class)
 public class ServerLoginPacketListenerImplMixin {
     @Shadow @Final Connection connection;
 
-    @Redirect(method = "handleKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Crypt;getCipher(ILjava/security/Key;)Ljavax/crypto/Cipher;"))
-    private Cipher onKey$initializeVelocityCipher(int ignored1, Key secretKey) throws GeneralSecurityException {
-        // Hijack this portion of the cipher initialization and set up our own encryption handler.
+    @Inject(method = "handleKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;setEncryptionKey(Ljavax/crypto/Cipher;Ljavax/crypto/Cipher;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void onKey$ignoreMinecraftEncryptionPipelineInjection(ServerboundKeyPacket packet, CallbackInfo ci, String _digest, PrivateKey _serverPrivateKey, SecretKey secretKey) throws GeneralSecurityException {
+        // The `ClientConnectionEncryptionExtension` implementation in `ConnectionMixin` will replace
+        // the pipeline handler vanilla just installed with Velocity's own.
         ((ClientConnectionEncryptionExtension) this.connection).setupEncryption((SecretKey) secretKey);
-
-        // Turn the operation into a no-op.
-        return null;
-    }
-
-    @Redirect(method = "handleKey", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;setEncryptionKey(Ljavax/crypto/Cipher;Ljavax/crypto/Cipher;)V"))
-    public void onKey$ignoreMinecraftEncryptionPipelineInjection(Connection connection, Cipher ignored1, Cipher ignored2) {
-        // Turn the operation into a no-op.
     }
 }
